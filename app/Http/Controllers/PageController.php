@@ -15,14 +15,6 @@ class PageController extends Controller
     }
 
     /**
-     * Display the student directory and management records.
-     */
-    public function students(): View
-    {
-        return view('students.index');
-    }
-
-    /**
      * Display active courses and syllabus catalogue.
      */
     public function courses(): View
