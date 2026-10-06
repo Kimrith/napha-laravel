@@ -2,18 +2,29 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
     /**
-     * A basic test example.
+     * Test that all primary dashboard routes return successful status codes.
      */
-    public function test_the_application_returns_a_successful_response(): void
+    public function test_all_portal_routes_render_successfully(): void
     {
-        $response = $this->get('/');
+        $routes = [
+            '/',
+            '/dashboard',
+            '/students',
+            '/courses',
+            '/attendance',
+            '/grades',
+            '/departments',
+            '/settings',
+        ];
 
-        $response->assertStatus(200);
+        foreach ($routes as $route) {
+            $response = $this->get($route);
+            $response->assertStatus(200);
+        }
     }
 }
