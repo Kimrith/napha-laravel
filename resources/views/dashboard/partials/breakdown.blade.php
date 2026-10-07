@@ -93,41 +93,23 @@
         </div>
 
         <div class="divide-y divide-slate-100">
-            <div class="py-3 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <img class="w-9 h-9 rounded-xl object-cover ring-2 ring-slate-100" 
-                         src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop" alt="Alexander">
-                    <div>
-                        <p class="text-xs font-bold text-slate-900">Alexander Wright enrolled in B.Sc. Software Engineering</p>
-                        <p class="text-[11px] text-slate-400">ID: STU-2026-001 · Assigned to Prof. Alan Turing</p>
+            @forelse($recentStudents ?? [] as $recent)
+                <div class="py-3 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <img class="w-9 h-9 rounded-xl object-cover ring-2 ring-slate-100" 
+                             src="{{ $recent->avatar ?: 'https://ui-avatars.com/api/?name=' . urlencode($recent->name) . '&background=6366f1&color=fff' }}" alt="{{ $recent->name }}">
+                        <div>
+                            <p class="text-xs font-bold text-slate-900">{{ $recent->name }} enrolled in {{ $recent->degree ?: $recent->major }}</p>
+                            <p class="text-[11px] text-slate-400">ID: {{ $recent->student_id }} · {{ $recent->advisor ? 'Assigned to ' . $recent->advisor : 'Active' }}</p>
+                        </div>
                     </div>
+                    <span class="text-[11px] font-medium text-slate-400">{{ $recent->created_at?->diffForHumans() ?? 'Recently' }}</span>
                 </div>
-                <span class="text-[11px] font-medium text-slate-400">12 min ago</span>
-            </div>
-
-            <div class="py-3 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <img class="w-9 h-9 rounded-xl object-cover ring-2 ring-slate-100" 
-                         src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=200&auto=format&fit=crop" alt="Amara">
-                    <div>
-                        <p class="text-xs font-bold text-slate-900">Amara Okafor submitted AI Thesis Proposal</p>
-                        <p class="text-[11px] text-slate-400">ID: STU-2026-002 · Faculty of Informatics</p>
-                    </div>
+            @empty
+                <div class="py-6 text-center text-xs text-slate-400">
+                    No recent student admissions yet.
                 </div>
-                <span class="text-[11px] font-medium text-slate-400">45 min ago</span>
-            </div>
-
-            <div class="py-3 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <img class="w-9 h-9 rounded-xl object-cover ring-2 ring-slate-100" 
-                         src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop" alt="Fatima">
-                    <div>
-                        <p class="text-xs font-bold text-slate-900">Fatima Al-Zahra received 4.00 Grade Matrix Certification</p>
-                        <p class="text-[11px] text-slate-400">ID: STU-2026-007 · Cryptographic Systems</p>
-                    </div>
-                </div>
-                <span class="text-[11px] font-medium text-slate-400">2 hours ago</span>
-            </div>
+            @endforelse
         </div>
     </div>
 </div>

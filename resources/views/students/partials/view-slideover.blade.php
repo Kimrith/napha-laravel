@@ -65,7 +65,7 @@
                                 </div>
                                 <div>
                                     <span class="text-[10px] font-bold uppercase text-slate-400">Attendance</span>
-                                    <p class="text-base font-extrabold text-emerald-600 mt-0.5">96.4%</p>
+                                    <p class="text-base font-extrabold text-emerald-600 mt-0.5" x-text="activeStudent.attendance ? activeStudent.attendance + '%' : 'N/A'"></p>
                                 </div>
                             </div>
 
@@ -75,19 +75,19 @@
                                 <div class="space-y-2.5 text-xs">
                                     <div class="flex justify-between py-1.5 border-b border-slate-100">
                                         <span class="text-slate-500">Gender & Pronouns</span>
-                                        <span class="font-semibold text-slate-800" x-text="activeStudent.gender + ' (' + activeStudent.pronouns + ')'"></span>
+                                        <span class="font-semibold text-slate-800" x-text="activeStudent.gender + (activeStudent.pronouns ? ' (' + activeStudent.pronouns + ')' : '')"></span>
                                     </div>
                                     <div class="flex justify-between py-1.5 border-b border-slate-100">
                                         <span class="text-slate-500">Date of Birth</span>
-                                        <span class="font-semibold text-slate-800" x-text="activeStudent.dob + ' (Age ' + activeStudent.age + ')'"></span>
+                                        <span class="font-semibold text-slate-800" x-text="(activeStudent.dob || '-') + (activeStudent.age ? ' (Age ' + activeStudent.age + ')' : '')"></span>
                                     </div>
                                     <div class="flex justify-between py-1.5 border-b border-slate-100">
                                         <span class="text-slate-500">Academic Advisor</span>
-                                        <span class="font-semibold text-brand-600" x-text="activeStudent.advisor"></span>
+                                        <span class="font-semibold text-brand-600" x-text="activeStudent.advisor || 'Unassigned'"></span>
                                     </div>
                                     <div class="flex justify-between py-1.5 border-b border-slate-100">
                                         <span class="text-slate-500">Department</span>
-                                        <span class="font-semibold text-slate-800" x-text="activeStudent.department"></span>
+                                        <span class="font-semibold text-slate-800" x-text="activeStudent.department || 'Unassigned'"></span>
                                     </div>
                                 </div>
                             </div>
@@ -111,7 +111,7 @@
                                         </div>
                                         <div>
                                             <p class="text-[10px] text-slate-400 font-medium">Mobile Phone</p>
-                                            <p class="font-semibold text-slate-800" x-text="activeStudent.phone"></p>
+                                            <p class="font-semibold text-slate-800" x-text="activeStudent.phone || 'N/A'"></p>
                                         </div>
                                     </div>
                                 </div>

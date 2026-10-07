@@ -58,8 +58,12 @@
                                     </div>
                                     <div class="flex items-center gap-2 mt-0.5 text-xs text-slate-400">
                                         <span x-text="student.gender"></span>
-                                        <span>•</span>
-                                        <span x-text="'Born ' + student.dob + ' (' + student.age + 'y)'"></span>
+                                        <template x-if="student.dob">
+                                            <span>•</span>
+                                        </template>
+                                        <template x-if="student.dob">
+                                            <span x-text="'Born ' + student.dob + (student.age ? ' (' + student.age + 'y)' : '')"></span>
+                                        </template>
                                     </div>
                                 </div>
                             </div>
@@ -101,7 +105,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                     </svg>
-                                    <span x-text="student.phone"></span>
+                                    <span x-text="student.phone || 'N/A'"></span>
                                 </div>
                             </div>
                         </td>

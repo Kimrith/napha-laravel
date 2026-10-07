@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
@@ -15,3 +16,6 @@ Route::get('/attendance', [PageController::class, 'attendance'])->name('attendan
 Route::get('/grades', [PageController::class, 'grades'])->name('grades.index');
 Route::get('/departments', [PageController::class, 'departments'])->name('departments.index');
 Route::get('/settings', [PageController::class, 'settings'])->name('settings.index');
+
+Route::get('/login', [AuthController::class, 'login'])->name('login');
+Route::get('/register', [AuthController::class, 'register'])->name('register');

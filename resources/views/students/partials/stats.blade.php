@@ -67,7 +67,7 @@
             </div>
         </div>
         <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-2xl font-extrabold text-slate-900 tracking-tight">3.83</span>
+            <span class="text-2xl font-extrabold text-slate-900 tracking-tight" x-text="students.length ? (students.reduce((acc, s) => acc + (parseFloat(s.gpa) || 0), 0) / students.length).toFixed(2) : '0.00'"></span>
             <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">Top Tier</span>
         </div>
         <p class="text-xs text-slate-500 mt-1">Scale of 4.00 Grade Matrix</p>

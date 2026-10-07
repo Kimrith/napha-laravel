@@ -70,16 +70,8 @@
                 status: 'Active'
             },
 
-            // Initial Course Records (seeded from controller if provided or default mock)
-            courses: @json($courses ?? null) || [
-                { code: 'CS-101', name: 'Object-Oriented Programming in C++ & Rust', dept: 'Computer Science', instructor: 'Prof. Alan Turing', credits: 4, enrolled: 88, capacity: 90, days: 'Mon, Wed 09:00 - 11:00 AM', room: 'Hall Alpha-2', status: 'Active' },
-                { code: 'AI-402', name: 'Deep Learning & Neural Architectures', dept: 'Informatics & AI', instructor: 'Dr. Fei-Fei Li', credits: 4, enrolled: 64, capacity: 65, days: 'Tue, Thu 01:30 - 03:30 PM', room: 'Lab Turing-1', status: 'Active' },
-                { code: 'DES-204', name: 'Human-Centered UI/UX Systems', dept: 'Digital Design', instructor: 'Prof. Jony Ive', credits: 3, enrolled: 52, capacity: 60, days: 'Wed, Fri 10:00 - 12:00 PM', room: 'Studio Beta', status: 'Active' },
-                { code: 'ROB-310', name: 'Autonomous Robotics & Kinematics', dept: 'Mechatronics', instructor: 'Dr. Rodney Brooks', credits: 4, enrolled: 45, capacity: 50, days: 'Mon, Thu 02:00 - 04:00 PM', room: 'RoboLab 4', status: 'Active' },
-                { code: 'BIO-215', name: 'Genomic Sequencing & CRISPR Protocols', dept: 'Life Sciences', instructor: 'Dr. Jennifer Doudna', credits: 4, enrolled: 72, capacity: 75, days: 'Tue, Fri 09:00 - 11:00 AM', room: 'BioLab 3', status: 'Active' },
-                { code: 'FIN-350', name: 'Quantitative Global Financial Markets', dept: 'Business & Finance', instructor: 'Prof. Paul Krugman', credits: 3, enrolled: 80, capacity: 80, days: 'Mon, Wed 01:00 - 02:30 PM', room: 'Hall Gamma-1', status: 'Full' },
-                { code: 'SEC-401', name: 'Applied Cryptography & Zero-Knowledge Proofs', dept: 'Cybersecurity', instructor: 'Dr. Whitfield Diffie', credits: 4, enrolled: 58, capacity: 60, days: 'Tue, Thu 11:00 - 01:00 PM', room: 'SecVault Lab', status: 'Active' }
-            ],
+            // Initial Course Records from controller
+            courses: @json($courses ?? []),
 
             // Filtered courses getter
             get filteredCourses() {
