@@ -19,6 +19,10 @@
             selectedStatus: 'All',
             selectedIds: [],
 
+            // Pagination state
+            currentPage: 1,
+            perPage: 5,
+
             addModalOpen: false,
             viewSlideOverOpen: false,
             editModalOpen: false,
@@ -45,11 +49,11 @@
 
             get filteredStudents() {
                 return this.students.filter(student => {
-                    const matchesSearch = this.searchQuery === '' || 
+                    const matchesSearch = this.searchQuery === '' ||
                         student.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
                         (student.id && student.id.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
                         student.email.toLowerCase().includes(this.searchQuery.toLowerCase());
-                    
+
                     const matchesMajor = this.selectedMajor === 'All' || student.major === this.selectedMajor;
                     const matchesStatus = this.selectedStatus === 'All' || student.status === this.selectedStatus;
 
@@ -57,12 +61,64 @@
                 });
             },
 
+            get totalPages() {
+                return Math.max(1, Math.ceil(this.filteredStudents.length / this.perPage));
+            },
+
+            get paginatedStudents() {
+                if (this.currentPage > this.totalPages) {
+                    this.currentPage = this.totalPages;
+                }
+                const start = (this.currentPage - 1) * this.perPage;
+                return this.filteredStudents.slice(start, start + this.perPage);
+            },
+
+            get visiblePageNumbers() {
+                const total = this.totalPages;
+                const current = this.currentPage;
+                if (total <= 7) {
+                    return Array.from({ length: total }, (_, i) => i + 1);
+                }
+                const pages = [1];
+                if (current > 3) pages.push('...');
+                const start = Math.max(2, current - 1);
+                const end = Math.min(total - 1, current + 1);
+                for (let i = start; i <= end; i++) pages.push(i);
+                if (current < total - 2) pages.push('...');
+                pages.push(total);
+                return pages;
+            },
+
+            goToPage(p) {
+                if (typeof p === 'number' && p >= 1 && p <= this.totalPages) {
+                    this.currentPage = p;
+                }
+            },
+
+            prevPage() {
+                if (this.currentPage > 1) {
+                    this.currentPage--;
+                }
+            },
+
+            nextPage() {
+                if (this.currentPage < this.totalPages) {
+                    this.currentPage++;
+                }
+            },
+
             get allSelected() {
-                return this.filteredStudents.length > 0 && this.selectedIds.length === this.filteredStudents.length;
+                return this.paginatedStudents.length > 0 && this.paginatedStudents.every(s => this.selectedIds.includes(s.id));
             },
 
             toggleSelectAll() {
-                this.selectedIds = this.allSelected ? [] : this.filteredStudents.map(s => s.id);
+                if (this.allSelected) {
+                    const pageIds = this.paginatedStudents.map(s => s.id);
+                    this.selectedIds = this.selectedIds.filter(id => !pageIds.includes(id));
+                } else {
+                    const pageIds = this.paginatedStudents.map(s => s.id);
+                    this.selectedIds = Array.from(new Set([...this.selectedIds, ...pageIds]));
+                }
             },
 
             toggleRowSelect(id) {
@@ -242,7 +298,7 @@
 
                 const link = document.createElement('a');
                 link.setAttribute('href', encodeURI(csvContent));
-                link.setAttribute('download', `EduPulse_Students_Export_${new Date().toISOString().slice(0,10)}.csv`);
+                link.setAttribute('download', `EduPulse_Students_Export_${new Date().toISOString().slice(0, 10)}.csv`);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);

@@ -35,6 +35,26 @@ class StudentController extends Controller
             $query->where('status', $request->input('status'));
         }
 
+        if ($request->wantsJson() && $request->boolean('paginate', false)) {
+            $perPage = (int) $request->input('per_page', 10);
+            $paginated = $query->paginate($perPage)->withQueryString();
+
+            $data = collect($paginated->items())->map(fn (Student $student): array => $this->formatStudentForView($student));
+
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+                'meta' => [
+                    'current_page' => $paginated->currentPage(),
+                    'last_page' => $paginated->lastPage(),
+                    'per_page' => $paginated->perPage(),
+                    'total' => $paginated->total(),
+                    'from' => $paginated->firstItem(),
+                    'to' => $paginated->lastItem(),
+                ],
+            ]);
+        }
+
         $students = $query->get()->map(function (Student $student): array {
             return $this->formatStudentForView($student);
         });
