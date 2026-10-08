@@ -7,6 +7,7 @@ use App\Models\Student;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class StudentController extends Controller
@@ -113,7 +114,9 @@ class StudentController extends Controller
             'gpa' => ['nullable', 'numeric', 'between:0,4.00'],
             'credits' => ['nullable', 'integer', 'min:0'],
             'status' => ['nullable', 'string', 'max:30'],
-            'avatar' => ['nullable', 'string', 'max:500'],
+            'avatar' => $request->hasFile('avatar')
+                ? ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048']
+                : ['nullable', 'string', 'max:500'],
         ]);
 
         if (empty($validated['student_id'])) {
@@ -125,7 +128,10 @@ class StudentController extends Controller
             $validated['status'] = 'Active';
         }
 
-        if (empty($validated['avatar'])) {
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $validated['avatar'] = Storage::url($path);
+        } elseif (empty($validated['avatar'])) {
             $validated['avatar'] = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=250&auto=format&fit=crop';
         }
 
@@ -204,8 +210,24 @@ class StudentController extends Controller
             'gpa' => ['nullable', 'numeric', 'between:0,4.00'],
             'credits' => ['nullable', 'integer', 'min:0'],
             'status' => ['nullable', 'string', 'max:30'],
-            'avatar' => ['nullable', 'string', 'max:500'],
+            'avatar' => $request->hasFile('avatar')
+                ? ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048']
+                : ['nullable', 'string', 'max:500'],
         ]);
+
+        if ($request->hasFile('avatar')) {
+            if ($student->avatar && str_starts_with($student->avatar, '/storage/avatars/')) {
+                $oldPath = str_replace('/storage/', '', $student->avatar);
+                Storage::disk('public')->delete($oldPath);
+            }
+
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $validated['avatar'] = Storage::url($path);
+        } else {
+            if (! array_key_exists('avatar', $validated) || $validated['avatar'] === null || $validated['avatar'] === '') {
+                unset($validated['avatar']);
+            }
+        }
 
         $student->update($validated);
         $student->load('department');
@@ -229,6 +251,11 @@ class StudentController extends Controller
         $name = $student->name;
         $studentId = $student->student_id;
 
+        if ($student->avatar && str_starts_with($student->avatar, '/storage/avatars/')) {
+            $oldPath = str_replace('/storage/', '', $student->avatar);
+            Storage::disk('public')->delete($oldPath);
+        }
+
         $student->delete();
 
         if ($request->wantsJson()) {
@@ -248,6 +275,11 @@ class StudentController extends Controller
      */
     private function formatStudentForView(Student $student): array
     {
+        $avatar = $student->avatar;
+        if (! empty($avatar) && ! str_starts_with($avatar, 'http://') && ! str_starts_with($avatar, 'https://') && ! str_starts_with($avatar, '/')) {
+            $avatar = Storage::url($avatar);
+        }
+
         return [
             'id' => $student->student_id,
             'db_id' => $student->id,
@@ -267,7 +299,7 @@ class StudentController extends Controller
             'credits' => (int) ($student->credits ?? 0),
             'advisor' => $student->advisor ?: 'Unassigned',
             'status' => $student->status,
-            'avatar' => $student->avatar ?: 'https://ui-avatars.com/api/?name='.urlencode($student->name).'&background=6366f1&color=fff',
+            'avatar' => $avatar ?: 'https://ui-avatars.com/api/?name='.urlencode($student->name).'&background=6366f1&color=fff',
         ];
     }
 }
