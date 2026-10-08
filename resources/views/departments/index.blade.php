@@ -36,13 +36,7 @@
                 status: 'Active'
             },
 
-            departments: @json($departments ?? null) || [
-                { name: 'School of Computing & Informatics', code: 'SCI', head: 'Prof. Alan Turing', students: 894, faculty: 34, programs: 6, budget: '$2.4M', status: 'Active' },
-                { name: 'School of Business & Global Finance', code: 'SBGF', head: 'Prof. Paul Krugman', students: 642, faculty: 26, programs: 5, budget: '$1.8M', status: 'Active' },
-                { name: 'Faculty of Life Sciences & Biotech', code: 'FLSB', head: 'Dr. Jennifer Doudna', students: 520, faculty: 22, programs: 4, budget: '$3.1M', status: 'Active' },
-                { name: 'Design, Arts & Human Experience', code: 'DAHE', head: 'Prof. Jony Ive', students: 410, faculty: 18, programs: 4, budget: '$1.2M', status: 'Active' },
-                { name: 'Mechatronics & Robotics Engineering', code: 'MRE', head: 'Dr. Rodney Brooks', students: 379, faculty: 15, programs: 3, budget: '$2.8M', status: 'Active' }
-            ],
+            departments: @json($departments ?? []),
 
             get filteredDepartments() {
                 const query = this.searchQuery.toLowerCase().trim();

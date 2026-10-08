@@ -1,5 +1,6 @@
 <!-- resources/views/students/partials/add-modal.blade.php -->
 <div x-cloak x-show="addModalOpen" 
+     @if($errors->any()) x-init="addModalOpen = true" @endif
      class="fixed inset-0 z-50 overflow-y-auto"
      aria-labelledby="modal-title" role="dialog" aria-modal="true">
     
@@ -46,34 +47,91 @@
             </div>
 
             <!-- Modal Form -->
-            <form @submit.prevent="saveNewStudent()" class="p-6 space-y-4">
+            <form action="{{ route('students.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
+                @csrf
+
+                @if($errors->any())
+                    <div class="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-700">
+                        <div class="font-bold mb-1">Please correct the following errors:</div>
+                        <ul class="list-disc list-inside space-y-0.5">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                    <!-- Avatar Upload -->
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Avatar Photo</label>
+                        <div class="flex items-center gap-4 p-3 bg-slate-50 border border-slate-200 rounded-2xl">
+                            <div class="relative shrink-0">
+                                <template x-if="newStudentAvatarPreview">
+                                    <img :src="newStudentAvatarPreview" alt="Avatar preview"
+                                         class="w-14 h-14 rounded-2xl object-cover ring-2 ring-brand-500/20 shadow-xs">
+                                </template>
+                                <template x-if="!newStudentAvatarPreview">
+                                    <div class="w-14 h-14 rounded-2xl bg-white border border-slate-200/80 flex items-center justify-center text-slate-400 shadow-2xs">
+                                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                    </div>
+                                </template>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <label for="add-student-avatar-input"
+                                           class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-brand-500 rounded-xl text-xs font-semibold text-slate-700 hover:text-brand-600 transition-all shadow-2xs">
+                                        <svg class="w-4 h-4 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <span x-text="newStudentAvatarPreview ? 'Change Photo' : 'Choose File'"></span>
+                                    </label>
+                                    <input id="add-student-avatar-input"
+                                           type="file"
+                                           name="avatar"
+                                           accept="image/png,image/jpeg,image/jpg,image/webp,image/gif"
+                                           @change="handleNewAvatarChange($event)"
+                                           class="sr-only">
+                                    <template x-if="newStudentAvatarPreview">
+                                        <button type="button" @click="clearNewAvatar()"
+                                                class="px-2.5 py-1.5 rounded-xl text-xs font-medium text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors">
+                                            Remove
+                                        </button>
+                                    </template>
+                                </div>
+                                <p class="text-[11px] text-slate-400 mt-1">PNG, JPG, or WEBP up to 2MB</p>
+                            </div>
+                        </div>
+                    </div>
                     
                     <!-- Full Name -->
                     <div class="sm:col-span-2">
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Full Name *</label>
-                        <input type="text" x-model="newStudent.name" required placeholder="e.g. Maya Lin"
+                        <input type="text" name="name" x-model="newStudent.name" required placeholder="e.g. Maya Lin"
                                class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800">
                     </div>
 
                     <!-- Email -->
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Official Email *</label>
-                        <input type="email" x-model="newStudent.email" required placeholder="name@edupulse.edu"
+                        <input type="email" name="email" x-model="newStudent.email" required placeholder="name@edupulse.edu"
                                class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800">
                     </div>
 
                     <!-- Phone -->
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Phone Number</label>
-                        <input type="tel" x-model="newStudent.phone" placeholder="+1 (555) 000-0000"
+                        <input type="tel" name="phone" x-model="newStudent.phone" placeholder="+1 (555) 000-0000"
                                class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800">
                     </div>
 
                     <!-- Major -->
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Academic Major</label>
-                        <select x-model="newStudent.major"
+                        <select name="major" x-model="newStudent.major"
                                 class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800 font-medium">
                             <option value="Computer Science">Computer Science</option>
                             <option value="Data Science & AI">Data Science & AI</option>
@@ -89,7 +147,7 @@
                     <!-- Degree Program -->
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Degree Title</label>
-                        <input type="text" x-model="newStudent.degree" placeholder="B.Sc. Computer Engineering"
+                        <input type="text" name="degree" x-model="newStudent.degree" placeholder="B.Sc. Computer Engineering"
                                class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800">
                     </div>
 
@@ -97,19 +155,19 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Gender & Pronouns</label>
                         <div class="grid grid-cols-2 gap-2">
-                            <select x-model="newStudent.gender" class="px-2.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl">
+                            <select name="gender" x-model="newStudent.gender" class="px-2.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl">
                                 <option value="Female">Female</option>
                                 <option value="Male">Male</option>
                                 <option value="Non-Binary">Non-Binary</option>
                             </select>
-                            <input type="text" x-model="newStudent.pronouns" placeholder="e.g. She/Her" class="px-2.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl">
+                            <input type="text" name="pronouns" x-model="newStudent.pronouns" placeholder="e.g. She/Her" class="px-2.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl">
                         </div>
                     </div>
 
                     <!-- Status -->
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Enrollment Status</label>
-                        <select x-model="newStudent.status"
+                        <select name="status" x-model="newStudent.status"
                                 class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800 font-medium">
                             <option value="Active">Active Student</option>
                             <option value="Inactive">Inactive / On Leave</option>

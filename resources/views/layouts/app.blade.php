@@ -75,7 +75,8 @@
               this.toast.show = true;
               setTimeout(() => { this.toast.show = false; }, 3800);
           }
-      }">
+      }"
+      x-init="@if(session('success')) showToast('{{ session('success') }}', 'success'); @endif @if(session('error')) showToast('{{ session('error') }}', 'danger'); @endif">
 
     <!-- Toast Notification System -->
     <div x-cloak x-show="toast.show" 

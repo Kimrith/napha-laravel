@@ -29,16 +29,7 @@
             selectedLecture: 'CS-101 (Programming)',
             confirmModalOpen: false,
 
-            attendees: @json($attendees ?? null) || [
-                { id: 'STU-2026-001', name: 'Alexander Wright', major: 'Computer Science', timeIn: '08:54 AM', status: 'Present' },
-                { id: 'STU-2026-002', name: 'Amara Okafor', major: 'Data Science & AI', timeIn: '08:58 AM', status: 'Present' },
-                { id: 'STU-2026-003', name: 'Clara Lindqvist', major: 'Digital Design', timeIn: '09:05 AM', status: 'Late' },
-                { id: 'STU-2026-004', name: 'Marcus Chen', major: 'Robotics & Automation', timeIn: '--:--', status: 'Excused' },
-                { id: 'STU-2026-005', name: 'Sophia Martinez', major: 'Biotechnology', timeIn: '08:50 AM', status: 'Present' },
-                { id: 'STU-2026-006', name: 'Liam Davies', major: 'International Finance', timeIn: '08:59 AM', status: 'Present' },
-                { id: 'STU-2026-007', name: 'Fatima Al-Zahra', major: 'Cybersecurity', timeIn: '08:48 AM', status: 'Present' },
-                { id: 'STU-2026-008', name: 'Ethan Taylor', major: 'Media Communications', timeIn: '--:--', status: 'Absent' }
-            ],
+            attendees: @json($attendees ?? []),
 
             get counts() {
                 return {

@@ -11,12 +11,12 @@
             </div>
         </div>
         <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-2xl font-extrabold text-slate-900 tracking-tight">2,845</span>
+            <span class="text-2xl font-extrabold text-slate-900 tracking-tight">{{ number_format($studentsCount ?? 0) }}</span>
             <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
-                +12.4%
+                Active
             </span>
         </div>
-        <p class="text-xs text-slate-500 mt-1">Active full-time equivalents</p>
+        <p class="text-xs text-slate-500 mt-1">Total enrolled students</p>
     </div>
 
     <!-- 2: Active Courses -->
@@ -30,10 +30,10 @@
             </div>
         </div>
         <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-2xl font-extrabold text-slate-900 tracking-tight">64 Courses</span>
-            <span class="text-xs font-medium text-slate-500">18 Departments</span>
+            <span class="text-2xl font-extrabold text-slate-900 tracking-tight">{{ number_format($coursesCount ?? 0) }} Courses</span>
+            <span class="text-xs font-medium text-slate-500">{{ number_format($departmentsCount ?? 0) }} Departments</span>
         </div>
-        <p class="text-xs text-slate-500 mt-1">112 faculty members</p>
+        <p class="text-xs text-slate-500 mt-1">Academic curriculum catalog</p>
     </div>
 
     <!-- 3: Campus Attendance -->

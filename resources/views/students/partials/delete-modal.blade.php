@@ -15,10 +15,14 @@
             <p class="text-xs text-slate-500 mt-1">
                 Are you sure you want to remove <strong class="text-slate-800" x-text="studentToDelete ? studentToDelete.name : ''"></strong> from the active student database? This action can be reviewed in the audit log.
             </p>
-            <div class="mt-6 flex justify-end gap-3">
-                <button type="button" @click="deleteModalOpen = false" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
-                <button type="button" @click="executeDelete()" class="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 shadow-sm">Delete Record</button>
-            </div>
+            <form :action="'/students/' + (studentToDelete ? (studentToDelete.student_id || studentToDelete.id) : '')" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="mt-6 flex justify-end gap-3">
+                    <button type="button" @click="deleteModalOpen = false" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 shadow-sm">Delete Record</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
