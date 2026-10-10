@@ -28,6 +28,17 @@ class Department extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'students_count' => 'integer',
+        'faculty_count' => 'integer',
+        'programs_count' => 'integer',
+    ];
+
+    /**
      * Get students enrolled in this department.
      */
     public function students(): HasMany
@@ -41,5 +52,19 @@ class Department extends Model
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class);
+    }
+
+    /**
+     * Retrieve the model for a bound value (supports both primary id and code).
+     */
+    public function resolveRouteBinding($value, $field = null): ?self
+    {
+        if ($field) {
+            return $this->where($field, $value)->first();
+        }
+
+        return $this->where('id', $value)
+            ->orWhere('code', $value)
+            ->first();
     }
 }

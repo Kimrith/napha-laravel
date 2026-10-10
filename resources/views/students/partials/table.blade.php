@@ -13,9 +13,10 @@
                         </label>
                     </th>
                     <th class="py-4 px-5 min-w-[260px]">Student Details</th>
+                    <th class="py-4 px-4 min-w-[130px]">Cohort / Class</th>
                     <th class="py-4 px-4 min-w-[130px]">Student ID</th>
                     <th class="py-4 px-4 min-w-[220px]">Contact Info</th>
-                    <th class="py-4 px-4 min-w-[200px]">Course / Major</th>
+                    <th class="py-4 px-4 min-w-[200px]">Department & Major</th>
                     <th class="py-4 px-4 min-w-[110px]">Status</th>
                     <th class="py-4 px-5 text-right min-w-[120px]">Actions</th>
                 </tr>
@@ -69,6 +70,24 @@
                             </div>
                         </td>
 
+                        <!-- Class Cohort Column -->
+                        <td class="py-4 px-4">
+                            <template x-if="student.class_code && student.class_code !== 'Unassigned'">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200/80 shadow-2xs">
+                                    <svg class="w-3.5 h-3.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                    </svg>
+                                    <span x-text="student.class_code"></span>
+                                </span>
+                            </template>
+                            <template x-if="!student.class_code || student.class_code === 'Unassigned'">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-500 border border-slate-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                    <span>Unassigned</span>
+                                </span>
+                            </template>
+                        </td>
+
                         <!-- Student ID Column -->
                         <td class="py-4 px-4">
                             <div
@@ -110,14 +129,17 @@
                             </div>
                         </td>
 
-                        <!-- Course / Major Column -->
+                        <!-- Department & Major Column -->
                         <td class="py-4 px-4">
                             <div>
                                 <div
                                     class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-50/70 text-brand-700 border border-brand-100">
                                     <span x-text="student.major"></span>
                                 </div>
-                                <p class="text-[11px] text-slate-400 mt-1 truncate" x-text="student.degree"></p>
+                                <div class="text-[11px] text-slate-500 mt-1 truncate" x-text="student.department ? 'Dept: ' + student.department : (student.degree || '')"></div>
+                                <template x-if="student.advisor && student.advisor !== 'Unassigned'">
+                                    <div class="text-[10px] text-slate-400 mt-0.5 truncate" x-text="'Advisor: ' + student.advisor"></div>
+                                </template>
                             </div>
                         </td>
 
@@ -178,7 +200,7 @@
 
                 <!-- Empty State -->
                 <tr x-show="filteredStudents.length === 0">
-                    <td colspan="7" class="py-12 text-center">
+                    <td colspan="8" class="py-12 text-center">
                         <div class="max-w-sm mx-auto">
                             <div
                                 class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
@@ -191,7 +213,7 @@
                             <p class="text-xs text-slate-500 mt-1">Try adjusting your search queries or clearing active
                                 filters.</p>
                             <button type="button"
-                                @click="searchQuery = ''; selectedMajor = 'All'; selectedStatus = 'All'"
+                                @click="searchQuery = ''; selectedClass = 'All'; selectedDepartment = 'All'; selectedMajor = 'All'; selectedStatus = 'All'"
                                 class="mt-3 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors">
                                 Clear all filters
                             </button>

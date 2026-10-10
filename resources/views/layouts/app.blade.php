@@ -49,8 +49,8 @@
         }
     </script>
 
-    <!-- Alpine.js CDN -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    <!-- Alpine.js (Local bundle to avoid Tracking Prevention / CDN blocks) -->
+    <script defer src="{{ asset('js/alpine.min.js') }}"></script>
 
     <style>
         [x-cloak] { display: none !important; }

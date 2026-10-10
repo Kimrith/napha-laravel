@@ -55,13 +55,16 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Department *</label>
                         <select x-model="editCourseForm.dept" required class="w-full px-3 py-2 text-sm bg-slate-50 focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-hidden">
-                            <option value="Computer Science">Computer Science</option>
-                            <option value="Informatics & AI">Informatics & AI</option>
-                            <option value="Digital Design">Digital Design</option>
-                            <option value="Mechatronics">Mechatronics</option>
-                            <option value="Life Sciences">Life Sciences</option>
-                            <option value="Business & Finance">Business & Finance</option>
-                            <option value="Cybersecurity">Cybersecurity</option>
+                            @foreach($departments ?? [] as $d)
+                                <option value="{{ $d->name }}">{{ $d->name }} ({{ $d->code }})</option>
+                            @endforeach
+                            @if(empty($departments) || count($departments) === 0)
+                                <option value="School of Computing & Informatics">School of Computing & Informatics</option>
+                                <option value="School of Business & Global Finance">School of Business & Global Finance</option>
+                                <option value="Faculty of Life Sciences & Biotech">Faculty of Life Sciences & Biotech</option>
+                                <option value="Design, Arts & Human Experience">Design, Arts & Human Experience</option>
+                                <option value="Mechatronics & Robotics Engineering">Mechatronics & Robotics Engineering</option>
+                            @endif
                         </select>
                     </div>
                 </div>

@@ -11,13 +11,13 @@
             </div>
         </div>
         <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-2xl font-extrabold text-slate-900 tracking-tight" x-text="students.length"></span>
+            <span class="text-2xl font-extrabold text-slate-900 tracking-tight" x-text="students.length">{{ $kpis['total'] ?? 0 }}</span>
             <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-                +12%
+                Active
             </span>
         </div>
-        <p class="text-xs text-slate-500 mt-1">Across 8 active departments</p>
+        <p class="text-xs text-slate-500 mt-1">Across {{ count($departments ?? []) }} active departments</p>
     </div>
 
     <!-- Card 2: Active Students -->
@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-2xl font-extrabold text-slate-900 tracking-tight" x-text="students.filter(s => s.status === 'Active').length"></span>
+            <span class="text-2xl font-extrabold text-slate-900 tracking-tight" x-text="students.filter(s => s.status === 'Active').length">{{ $kpis['active'] ?? 0 }}</span>
             <span class="text-xs font-medium text-slate-500">
                 (<span x-text="students.length ? Math.round((students.filter(s => s.status === 'Active').length / students.length) * 100) + '%' : '0%'"></span>)
             </span>
@@ -50,7 +50,7 @@
             </div>
         </div>
         <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-2xl font-extrabold text-slate-900 tracking-tight" x-text="students.filter(s => s.status === 'Inactive').length"></span>
+            <span class="text-2xl font-extrabold text-slate-900 tracking-tight" x-text="students.filter(s => s.status === 'Inactive').length">{{ $kpis['inactive'] ?? 0 }}</span>
             <span class="text-xs font-medium text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-md">Review required</span>
         </div>
         <p class="text-xs text-slate-500 mt-1">Leave of absence or deferral</p>
@@ -67,9 +67,9 @@
             </div>
         </div>
         <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-2xl font-extrabold text-slate-900 tracking-tight" x-text="students.length ? (students.reduce((acc, s) => acc + (parseFloat(s.gpa) || 0), 0) / students.length).toFixed(2) : '0.00'"></span>
-            <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">Top Tier</span>
+            <span class="text-2xl font-extrabold text-slate-900 tracking-tight" x-text="students.length ? (students.reduce((acc, s) => acc + (parseFloat(s.gpa) || 0), 0) / students.length).toFixed(2) : '{{ $kpis['avg_gpa'] ?? '0.00' }}'">{{ $kpis['avg_gpa'] ?? '0.00' }}</span>
+            <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">Scale 4.00</span>
         </div>
-        <p class="text-xs text-slate-500 mt-1">Scale of 4.00 Grade Matrix</p>
+        <p class="text-xs text-slate-500 mt-1">Real-time Grade Matrix</p>
     </div>
 </div>

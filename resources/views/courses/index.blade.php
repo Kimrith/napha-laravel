@@ -38,10 +38,14 @@
 <script>
     function courseDirectory() {
         return {
+            // Initial Course Records & Departments from controller
+            courses: @json($courses ?? []),
+            departments: @json($departments ?? []),
+
             // Search and filter state
-            searchQuery: '',
-            selectedDepartment: 'All',
-            selectedStatus: 'All',
+            searchQuery: '{{ $appliedFilters['search'] ?? '' }}',
+            selectedDepartment: '{{ $appliedFilters['department'] ?? 'All' }}',
+            selectedStatus: '{{ $appliedFilters['status'] ?? 'All' }}',
 
             // Pagination state
             currentPage: 1,
@@ -60,7 +64,7 @@
             newCourse: {
                 code: '',
                 name: '',
-                dept: 'Computer Science',
+                dept: 'School of Computing & Informatics',
                 instructor: '',
                 credits: 4,
                 enrolled: 0,
@@ -70,17 +74,16 @@
                 status: 'Active'
             },
 
-            // Initial Course Records from controller
-            courses: @json($courses ?? []),
-
             // Filtered courses getter
             get filteredCourses() {
                 return this.courses.filter(c => {
                     const query = this.searchQuery.toLowerCase().trim();
                     const matchesQuery = query === '' || 
-                        c.code.toLowerCase().includes(query) || 
-                        c.name.toLowerCase().includes(query) ||
-                        c.instructor.toLowerCase().includes(query);
+                        (c.code && c.code.toLowerCase().includes(query)) || 
+                        (c.name && c.name.toLowerCase().includes(query)) ||
+                        (c.instructor && c.instructor.toLowerCase().includes(query)) ||
+                        (c.room && c.room.toLowerCase().includes(query));
+
                     const matchesDept = this.selectedDepartment === 'All' || c.dept === this.selectedDepartment;
                     const matchesStatus = this.selectedStatus === 'All' || c.status === this.selectedStatus;
                     return matchesQuery && matchesDept && matchesStatus;
@@ -93,16 +96,54 @@
             },
 
             get paginatedCourses() {
+                if (this.currentPage > this.totalPages) {
+                    this.currentPage = this.totalPages;
+                }
                 const start = (this.currentPage - 1) * this.perPage;
                 return this.filteredCourses.slice(start, start + this.perPage);
             },
 
+            get visiblePageNumbers() {
+                const total = this.totalPages;
+                const current = this.currentPage;
+                if (total <= 7) {
+                    return Array.from({ length: total }, (_, i) => i + 1);
+                }
+                const pages = [1];
+                if (current > 3) pages.push('...');
+                const start = Math.max(2, current - 1);
+                const end = Math.min(total - 1, current + 1);
+                for (let i = start; i <= end; i++) pages.push(i);
+                if (current < total - 2) pages.push('...');
+                pages.push(total);
+                return pages;
+            },
+
+            goToPage(p) {
+                if (typeof p === 'number' && p >= 1 && p <= this.totalPages) {
+                    this.currentPage = p;
+                }
+            },
+
+            prevPage() {
+                if (this.currentPage > 1) {
+                    this.currentPage--;
+                }
+            },
+
+            nextPage() {
+                if (this.currentPage < this.totalPages) {
+                    this.currentPage++;
+                }
+            },
+
             // Modal and Action Handlers
             openAddModal() {
+                const defaultDept = this.departments.length > 0 ? this.departments[0].name : 'School of Computing & Informatics';
                 this.newCourse = {
                     code: '',
                     name: '',
-                    dept: this.selectedDepartment !== 'All' ? this.selectedDepartment : 'Computer Science',
+                    dept: this.selectedDepartment !== 'All' ? this.selectedDepartment : defaultDept,
                     instructor: '',
                     credits: 4,
                     enrolled: 0,
@@ -114,14 +155,36 @@
                 this.addModalOpen = true;
             },
 
-            saveNewCourse() {
-                if (!this.newCourse.code || !this.newCourse.name) {
+            async saveNewCourse() {
+                if (!this.newCourse.code || !this.newCourse.name || !this.newCourse.instructor) {
+                    alert('Please fill in Course Code, Name, and Instructor.');
                     return;
                 }
-                this.courses.unshift({ ...this.newCourse });
-                this.addModalOpen = false;
-                if (typeof showToast === 'function') {
-                    showToast(`Course ${this.newCourse.code} created successfully`, 'success');
+
+                try {
+                    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    const res = await fetch('{{ route("courses.store") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': token || ''
+                        },
+                        body: JSON.stringify(this.newCourse)
+                    });
+
+                    const json = await res.json();
+                    if (res.ok) {
+                        this.courses.unshift(json.data);
+                        this.addModalOpen = false;
+                        this.showToast(json.message || `Course ${json.data.code} created successfully`, 'success');
+                    } else {
+                        const errMsg = json.errors ? Object.values(json.errors).flat().join('\n') : (json.message || 'Failed to create course.');
+                        alert(errMsg);
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert('An error occurred while creating the course.');
                 }
             },
 
@@ -130,14 +193,35 @@
                 this.editModalOpen = true;
             },
 
-            saveEditedCourse() {
-                const index = this.courses.findIndex(c => c.code === this.editCourseForm.code);
-                if (index !== -1) {
-                    this.courses[index] = { ...this.editCourseForm };
-                    this.editModalOpen = false;
-                    if (typeof showToast === 'function') {
-                        showToast(`Course ${this.editCourseForm.code} updated`, 'success');
+            async saveEditedCourse() {
+                const targetId = this.editCourseForm.id || this.editCourseForm.code;
+                try {
+                    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    const res = await fetch(`/courses/${targetId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': token || ''
+                        },
+                        body: JSON.stringify(this.editCourseForm)
+                    });
+
+                    const json = await res.json();
+                    if (res.ok) {
+                        const index = this.courses.findIndex(c => c.id === this.editCourseForm.id || c.code === this.editCourseForm.code);
+                        if (index !== -1) {
+                            this.courses[index] = { ...json.data };
+                        }
+                        this.editModalOpen = false;
+                        this.showToast(json.message || `Course ${this.editCourseForm.code} updated`, 'success');
+                    } else {
+                        const errMsg = json.errors ? Object.values(json.errors).flat().join('\n') : (json.message || 'Failed to update course.');
+                        alert(errMsg);
                     }
+                } catch (e) {
+                    console.error(e);
+                    alert('An error occurred while updating the course.');
                 }
             },
 
@@ -146,15 +230,33 @@
                 this.deleteModalOpen = true;
             },
 
-            deleteConfirmed() {
-                if (this.courseToDelete) {
-                    const code = this.courseToDelete.code;
-                    this.courses = this.courses.filter(c => c.code !== code);
-                    this.deleteModalOpen = false;
-                    this.courseToDelete = null;
-                    if (typeof showToast === 'function') {
-                        showToast(`Course ${code} removed`, 'info');
+            async deleteConfirmed() {
+                if (!this.courseToDelete) return;
+                const targetId = this.courseToDelete.id || this.courseToDelete.code;
+                const code = this.courseToDelete.code;
+
+                try {
+                    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    const res = await fetch(`/courses/${targetId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': token || ''
+                        }
+                    });
+
+                    const json = await res.json();
+                    if (res.ok) {
+                        this.courses = this.courses.filter(c => c.id !== this.courseToDelete.id && c.code !== code);
+                        this.deleteModalOpen = false;
+                        this.courseToDelete = null;
+                        this.showToast(json.message || `Course ${code} removed`, 'danger');
+                    } else {
+                        alert(json.message || 'Failed to delete course.');
                     }
+                } catch (e) {
+                    console.error(e);
+                    alert('An error occurred while deleting the course.');
                 }
             },
 
@@ -176,13 +278,18 @@
                 const encodedUri = encodeURI(csvContent);
                 const link = document.createElement('a');
                 link.setAttribute('href', encodedUri);
-                link.setAttribute('download', `courses_export_${new Date().toISOString().slice(0, 10)}.csv`);
+                link.setAttribute('download', `EduPulse_Courses_Export_${new Date().toISOString().slice(0, 10)}.csv`);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
 
-                if (typeof showToast === 'function') {
-                    showToast('Courses exported to CSV', 'success');
+                this.showToast('Courses exported to CSV', 'info');
+            },
+
+            showToast(msg, type = 'success') {
+                const bodyData = window.Alpine ? window.Alpine.$data(document.body) : null;
+                if (bodyData && typeof bodyData.showToast === 'function') {
+                    bodyData.showToast(msg, type);
                 }
             }
         };

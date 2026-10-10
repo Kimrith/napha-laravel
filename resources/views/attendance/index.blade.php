@@ -25,11 +25,29 @@
 <script>
     function attendanceManager() {
         return {
-            selectedDate: '2026-10-06',
-            selectedLecture: 'CS-101 (Programming)',
+            selectedDate: '{{ $selectedDate }}',
+            selectedCourseId: '{{ $selectedCourseId }}',
+            selectedStatus: '{{ $selectedStatus }}',
+            searchQuery: '',
             confirmModalOpen: false,
+            logModalOpen: false,
+            isSubmitting: false,
 
             attendees: @json($attendees ?? []),
+            courses: @json($courses ?? []),
+
+            get filteredAttendees() {
+                if (!this.searchQuery.trim()) {
+                    return this.attendees;
+                }
+                const q = this.searchQuery.toLowerCase();
+                return this.attendees.filter(a => 
+                    (a.name && a.name.toLowerCase().includes(q)) ||
+                    (a.id && a.id.toLowerCase().includes(q)) ||
+                    (a.major && a.major.toLowerCase().includes(q)) ||
+                    (a.course_code && a.course_code.toLowerCase().includes(q))
+                );
+            },
 
             get counts() {
                 return {
@@ -47,12 +65,81 @@
                 return Math.round((attended / total) * 1000) / 10;
             },
 
-            toggleStatus(attendee) {
+            applyFilters() {
+                const params = new URLSearchParams();
+                if (this.selectedDate) params.set('date', this.selectedDate);
+                if (this.selectedCourseId) params.set('course_id', this.selectedCourseId);
+                if (this.selectedStatus) params.set('status', this.selectedStatus);
+                window.location.href = `{{ route('attendance.index') }}?` + params.toString();
+            },
+
+            async toggleStatus(attendee) {
                 const order = ['Present', 'Late', 'Excused', 'Absent'];
                 const nextIdx = (order.indexOf(attendee.status) + 1) % order.length;
-                attendee.status = order[nextIdx];
-                if (typeof showToast === 'function') {
-                    showToast(`Updated attendance for ${attendee.name} to ${attendee.status}`, 'info');
+                const nextStatus = order[nextIdx];
+                
+                try {
+                    const response = await fetch(`/attendance/${attendee.record_id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            status: nextStatus
+                        })
+                    });
+                    const result = await response.json();
+                    if (response.ok && result.success) {
+                        attendee.status = result.data.status;
+                        attendee.timeIn = result.data.timeIn;
+                        if (typeof showToast === 'function') {
+                            showToast(result.message || `Updated attendance for ${attendee.name} to ${attendee.status}`, 'info');
+                        }
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast(result.message || 'Error updating status', 'error');
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                    if (typeof showToast === 'function') {
+                        showToast('Network error while updating attendance', 'error');
+                    }
+                }
+            },
+
+            async initializeSession() {
+                this.isSubmitting = true;
+                try {
+                    const response = await fetch("{{ route('attendance.initialize-session') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            date: this.selectedDate,
+                            course_id: this.selectedCourseId
+                        })
+                    });
+                    const result = await response.json();
+                    if (response.ok && result.success) {
+                        if (typeof showToast === 'function') {
+                            showToast(result.message, 'success');
+                        }
+                        setTimeout(() => window.location.reload(), 500);
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast(result.message || 'Error initializing session', 'error');
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    this.isSubmitting = false;
                 }
             },
 
@@ -60,27 +147,75 @@
                 this.confirmModalOpen = true;
             },
 
-            submitFinalized() {
-                this.confirmModalOpen = false;
-                if (typeof showToast === 'function') {
-                    showToast('Roll-call finalized and forwarded to registrar.', 'success');
+            async submitFinalized() {
+                this.isSubmitting = true;
+                try {
+                    const response = await fetch("{{ route('attendance.finalize') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            date: this.selectedDate,
+                            course_id: this.selectedCourseId,
+                            attendees: this.attendees
+                        })
+                    });
+                    const result = await response.json();
+                    this.confirmModalOpen = false;
+                    if (response.ok && result.success) {
+                        if (typeof showToast === 'function') {
+                            showToast(result.message || 'Roll-call finalized and forwarded to registrar.', 'success');
+                        }
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast(result.message || 'Error finalizing roll-call', 'error');
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                    this.confirmModalOpen = false;
+                    if (typeof showToast === 'function') {
+                        showToast('Network error while finalizing', 'error');
+                    }
+                } finally {
+                    this.isSubmitting = false;
+                }
+            },
+
+            async deleteRecord(attendee) {
+                if (!confirm(`Are you sure you want to remove attendance log for ${attendee.name}?`)) return;
+                try {
+                    const response = await fetch(`/attendance/${attendee.record_id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+                    const result = await response.json();
+                    if (response.ok && result.success) {
+                        this.attendees = this.attendees.filter(a => a.record_id !== attendee.record_id);
+                        if (typeof showToast === 'function') {
+                            showToast(result.message, 'success');
+                        }
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast(result.message || 'Failed to remove record', 'error');
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
                 }
             },
 
             exportLog() {
-                const header = ['Student ID', 'Student Name', 'Academic Major', 'Check-In Time', 'Status'];
-                const rows = this.attendees.map(a => [`"${a.id}"`, `"${a.name}"`, `"${a.major}"`, `"${a.timeIn}"`, `"${a.status}"`]);
-                const csvContent = 'data:text/csv;charset=utf-8,' + [header.join(','), ...rows.map(e => e.join(','))].join('\n');
-                const link = document.createElement('a');
-                link.setAttribute('href', encodeURI(csvContent));
-                link.setAttribute('download', `attendance_${this.selectedDate}.csv`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-                if (typeof showToast === 'function') {
-                    showToast('Attendance report exported to CSV.', 'success');
-                }
+                const params = new URLSearchParams();
+                if (this.selectedDate) params.set('date', this.selectedDate);
+                if (this.selectedCourseId && this.selectedCourseId !== 'All') params.set('course_id', this.selectedCourseId);
+                window.location.href = `{{ route('attendance.export') }}?` + params.toString();
             }
         };
     }

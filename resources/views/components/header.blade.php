@@ -90,7 +90,7 @@
 
         <!-- Shortcut: 'New Student' Action Button -->
         <a href="{{ route('students.index') }}" 
-           @click="$dispatch('open-add-student')"
+           @click="if (window.location.pathname.includes('/students')) { $event.preventDefault(); $dispatch('open-add-student'); }"
            class="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-brand-50 text-brand-700 hover:bg-brand-100 border border-brand-200/80 transition-all shadow-2xs">
             <svg class="w-4 h-4 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M12 4v16m8-8H4"/>

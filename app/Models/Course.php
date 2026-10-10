@@ -63,4 +63,18 @@ class Course extends Model
     {
         return $this->hasMany(Grade::class);
     }
+
+    /**
+     * Retrieve the model for a bound value (supports both primary id and course code).
+     */
+    public function resolveRouteBinding($value, $field = null): ?self
+    {
+        if ($field) {
+            return $this->where($field, $value)->first();
+        }
+
+        return $this->where('id', $value)
+            ->orWhere('code', $value)
+            ->first();
+    }
 }

@@ -164,8 +164,64 @@
                         </div>
                     </div>
 
-                    <!-- Status -->
+                    <!-- Date of Birth & Age -->
                     <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Date of Birth</label>
+                        <input type="date" name="dob" x-model="newStudent.dob" @change="onDobChange('new')"
+                               class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Age</label>
+                        <input type="number" name="age" x-model="newStudent.age" min="10" max="100" placeholder="Auto from DOB"
+                               class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800">
+                    </div>
+
+                    <!-- Department & Class -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Department</label>
+                        <select name="department_id" x-model="newStudent.department_id"
+                                class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800 font-medium">
+                            <option value="">Unassigned Department</option>
+                            @foreach($departments ?? [] as $dept)
+                                <option value="{{ $dept->id }}">{{ $dept->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Assigned Class</label>
+                        <select name="class_id" x-model="newStudent.class_id"
+                                class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800 font-medium">
+                            <option value="">Unassigned Class</option>
+                            @foreach($classes ?? [] as $cls)
+                                <option value="{{ $cls->id }}">{{ $cls->code }} - {{ $cls->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Academic Advisor -->
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Academic Advisor</label>
+                        <input type="text" name="advisor" x-model="newStudent.advisor" placeholder="e.g. Dr. Sarah Vance"
+                               class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800">
+                    </div>
+
+                    <!-- GPA & Credits -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Cumulative GPA (0.00 - 4.00)</label>
+                        <input type="number" step="0.01" min="0" max="4.00" name="gpa" x-model="newStudent.gpa" placeholder="3.80"
+                               class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800 font-mono">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Earned Credits</label>
+                        <input type="number" min="0" max="250" name="credits" x-model="newStudent.credits" placeholder="0"
+                               class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800 font-mono">
+                    </div>
+
+                    <!-- Status -->
+                    <div class="sm:col-span-2">
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Enrollment Status</label>
                         <select name="status" x-model="newStudent.status"
                                 class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 focus:outline-hidden transition-all text-slate-800 font-medium">

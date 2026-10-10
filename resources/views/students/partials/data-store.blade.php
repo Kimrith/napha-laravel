@@ -4,11 +4,16 @@
         return {
             // Data Store from Controller
             students: @json($students ?? []),
+            classesList: @json($classes ?? []),
+            departmentsList: @json($departments ?? []),
 
-            searchQuery: '',
-            selectedMajor: 'All',
-            selectedStatus: 'All',
+            searchQuery: '{{ $appliedFilters['search'] ?? '' }}',
+            selectedMajor: '{{ $appliedFilters['major'] ?? 'All' }}',
+            selectedDepartment: '{{ $appliedFilters['department_id'] ?? 'All' }}',
+            selectedClass: '{{ $appliedFilters['class_id'] ?? 'All' }}',
+            selectedStatus: '{{ $appliedFilters['status'] ?? 'All' }}',
             selectedIds: [],
+            batchClassId: '',
 
             // Pagination state
             currentPage: 1,
@@ -27,13 +32,18 @@
                 id: '',
                 email: '',
                 phone: '',
+                department_id: '',
+                class_id: '',
                 major: 'Computer Science',
                 degree: 'B.Sc. Software Systems',
+                advisor: '',
                 gender: 'Female',
                 pronouns: 'She/Her',
-                dob: '2004-05-15',
-                status: 'Active',
-                gpa: '3.80'
+                dob: '',
+                age: '',
+                gpa: '',
+                credits: 0,
+                status: 'Active'
             },
             newStudentAvatarFile: null,
             newStudentAvatarPreview: null,
@@ -44,15 +54,24 @@
 
             get filteredStudents() {
                 return this.students.filter(student => {
-                    const matchesSearch = this.searchQuery === '' ||
-                        student.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                        (student.id && student.id.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
-                        student.email.toLowerCase().includes(this.searchQuery.toLowerCase());
+                    const query = (this.searchQuery || '').toLowerCase().trim();
+                    const matchesSearch = query === '' ||
+                        (student.name && student.name.toLowerCase().includes(query)) ||
+                        (student.id && student.id.toLowerCase().includes(query)) ||
+                        (student.email && student.email.toLowerCase().includes(query)) ||
+                        (student.phone && student.phone.toLowerCase().includes(query)) ||
+                        (student.advisor && student.advisor.toLowerCase().includes(query)) ||
+                        (student.class_code && student.class_code.toLowerCase().includes(query)) ||
+                        (student.class_name && student.class_name.toLowerCase().includes(query)) ||
+                        (student.major && student.major.toLowerCase().includes(query));
 
                     const matchesMajor = this.selectedMajor === 'All' || student.major === this.selectedMajor;
+                    const matchesDepartment = this.selectedDepartment === 'All' || String(student.department_id) === String(this.selectedDepartment);
+                    const matchesClass = this.selectedClass === 'All' || 
+                        (this.selectedClass === 'unassigned' ? (!student.class_id) : (String(student.class_id) === String(this.selectedClass)));
                     const matchesStatus = this.selectedStatus === 'All' || student.status === this.selectedStatus;
 
-                    return matchesSearch && matchesMajor && matchesStatus;
+                    return matchesSearch && matchesMajor && matchesDepartment && matchesClass && matchesStatus;
                 });
             },
 
@@ -306,56 +325,185 @@
                 }
             },
 
+            calculateAge(dobString) {
+                if (!dobString) return '';
+                const birthDate = new Date(dobString);
+                if (isNaN(birthDate.getTime())) return '';
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                return age >= 0 ? age : '';
+            },
+
+            onDobChange(target) {
+                if (target === 'new') {
+                    this.newStudent.age = this.calculateAge(this.newStudent.dob);
+                } else if (target === 'edit') {
+                    this.editForm.age = this.calculateAge(this.editForm.dob);
+                }
+            },
+
             resetNewStudent() {
                 this.newStudent = {
                     name: '',
                     id: '',
                     email: '',
                     phone: '',
+                    department_id: '',
+                    class_id: '',
                     major: 'Computer Science',
                     degree: 'B.Sc. Software Systems',
+                    advisor: '',
                     gender: 'Female',
                     pronouns: 'She/Her',
-                    dob: '2004-05-15',
-                    status: 'Active',
-                    gpa: '3.80'
+                    dob: '',
+                    age: '',
+                    gpa: '',
+                    credits: 0,
+                    status: 'Active'
                 };
                 this.clearNewAvatar();
             },
 
             exportCSV() {
-                const rows = this.filteredStudents;
-                let csvContent = 'data:text/csv;charset=utf-8,Student ID,Name,Gender,Pronouns,Email,Phone,Major,Degree,GPA,Status\n';
+                const params = new URLSearchParams();
+                if (this.searchQuery && this.searchQuery.trim()) {
+                    params.append('search', this.searchQuery.trim());
+                }
+                if (this.selectedMajor && this.selectedMajor !== 'All') {
+                    params.append('major', this.selectedMajor);
+                }
+                if (this.selectedDepartment && this.selectedDepartment !== 'All') {
+                    params.append('department_id', this.selectedDepartment);
+                }
+                if (this.selectedClass && this.selectedClass !== 'All') {
+                    params.append('class_id', this.selectedClass);
+                }
+                if (this.selectedStatus && this.selectedStatus !== 'All') {
+                    params.append('status', this.selectedStatus);
+                }
 
-                rows.forEach(s => {
-                    csvContent += `"${s.id}","${s.name}","${s.gender}","${s.pronouns}","${s.email}","${s.phone}","${s.major}","${s.degree}","${s.gpa}","${s.status}"\n`;
-                });
-
-                const link = document.createElement('a');
-                link.setAttribute('href', encodeURI(csvContent));
-                link.setAttribute('download', `EduPulse_Students_Export_${new Date().toISOString().slice(0, 10)}.csv`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-                this.showToast(`Exported ${rows.length} student records to CSV file.`, 'info');
+                const url = '{{ route("students.export") }}' + (params.toString() ? ('?' + params.toString()) : '');
+                window.location.href = url;
+                this.showToast('Generating official student records CSV...', 'info');
             },
 
-            batchMarkStatus(status) {
-                this.students.forEach(s => {
-                    if (this.selectedIds.includes(s.id)) {
-                        s.status = status;
+            async batchAssignClass() {
+                if (!this.batchClassId || this.selectedIds.length === 0) return;
+                try {
+                    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    const res = await fetch('{{ route("students.batch-assign") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': token || ''
+                        },
+                        body: JSON.stringify({
+                            student_ids: this.selectedIds,
+                            class_id: this.batchClassId === 'unassigned' ? null : this.batchClassId
+                        })
+                    });
+
+                    const json = await res.json();
+                    if (res.ok) {
+                        const targetClassId = this.batchClassId === 'unassigned' ? null : Number(this.batchClassId);
+                        const matchedClass = targetClassId ? this.classesList.find(c => c.id === targetClassId) : null;
+
+                        this.students.forEach(s => {
+                            if (this.selectedIds.includes(s.id) || this.selectedIds.includes(s.student_id)) {
+                                s.class_id = targetClassId;
+                                if (matchedClass) {
+                                    s.class_code = matchedClass.code;
+                                    s.class_name = `${matchedClass.code} - ${matchedClass.name}`;
+                                } else {
+                                    s.class_code = 'Unassigned';
+                                    s.class_name = 'Unassigned';
+                                }
+                            }
+                        });
+                        this.showToast(json.message || 'Assigned students successfully', 'success');
+                        this.batchClassId = '';
+                        this.selectedIds = [];
+                    } else {
+                        alert(json.message || 'Failed to assign class.');
                     }
-                });
-                this.showToast(`Updated status to ${status} for ${this.selectedIds.length} students`, 'success');
-                this.selectedIds = [];
+                } catch (e) {
+                    console.error(e);
+                    alert('An error occurred while assigning class.');
+                }
             },
 
-            batchDelete() {
-                if (confirm(`Are you sure you want to delete ${this.selectedIds.length} selected students?`)) {
-                    this.students = this.students.filter(s => !this.selectedIds.includes(s.id));
-                    this.showToast(`Deleted ${this.selectedIds.length} student records`, 'danger');
-                    this.selectedIds = [];
+            async batchMarkStatus(status) {
+                if (this.selectedIds.length === 0) return;
+                try {
+                    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    const res = await fetch('{{ route("students.batch-status") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': token || ''
+                        },
+                        body: JSON.stringify({
+                            student_ids: this.selectedIds,
+                            status: status
+                        })
+                    });
+
+                    const json = await res.json();
+                    if (res.ok) {
+                        this.students.forEach(s => {
+                            if (this.selectedIds.includes(s.id) || this.selectedIds.includes(s.student_id)) {
+                                s.status = status;
+                            }
+                        });
+                        this.showToast(json.message || `Updated status to ${status}`, 'success');
+                        this.selectedIds = [];
+                    } else {
+                        alert(json.message || 'Failed to update student status.');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert('An error occurred while updating status.');
+                }
+            },
+
+            async batchDelete() {
+                if (this.selectedIds.length === 0) return;
+                if (!confirm(`Are you sure you want to delete ${this.selectedIds.length} selected students? This cannot be undone.`)) {
+                    return;
+                }
+
+                try {
+                    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    const res = await fetch('{{ route("students.batch-delete") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': token || ''
+                        },
+                        body: JSON.stringify({
+                            student_ids: this.selectedIds
+                        })
+                    });
+
+                    const json = await res.json();
+                    if (res.ok) {
+                        const count = this.selectedIds.length;
+                        this.students = this.students.filter(s => !this.selectedIds.includes(s.id) && !this.selectedIds.includes(s.student_id));
+                        this.selectedIds = [];
+                        this.showToast(json.message || `Deleted ${count} student records`, 'danger');
+                    } else {
+                        alert(json.message || 'Failed to delete students.');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert('An error occurred while deleting students.');
                 }
             },
 

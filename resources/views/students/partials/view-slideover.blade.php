@@ -89,6 +89,10 @@
                                         <span class="text-slate-500">Department</span>
                                         <span class="font-semibold text-slate-800" x-text="activeStudent.department || 'Unassigned'"></span>
                                     </div>
+                                    <div class="flex justify-between py-1.5 border-b border-slate-100">
+                                        <span class="text-slate-500">Assigned Class</span>
+                                        <span class="font-semibold text-brand-600" x-text="activeStudent.class_name || 'Unassigned'"></span>
+                                    </div>
                                 </div>
                             </div>
 

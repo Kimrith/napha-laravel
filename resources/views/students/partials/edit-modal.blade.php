@@ -5,7 +5,7 @@
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
         <div x-show="editModalOpen" 
-             class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-100">
+             class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl w-full border border-slate-100">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <h3 class="text-base font-bold text-slate-900">Edit Student Record</h3>
                 <button @click="editModalOpen = false" class="text-slate-400 hover:text-slate-600">
@@ -88,6 +88,79 @@
                                 <option value="Cybersecurity">Cybersecurity</option>
                                 <option value="Media Communications">Media Communications</option>
                             </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Degree Title</label>
+                            <input type="text" name="degree" x-model="editForm.degree" placeholder="B.Sc. Software Systems" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800">
+                        </div>
+                    </div>
+
+                    <!-- Gender & Pronouns -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Gender</label>
+                            <select name="gender" x-model="editForm.gender" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                                <option value="Female">Female</option>
+                                <option value="Male">Male</option>
+                                <option value="Non-Binary">Non-Binary</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pronouns</label>
+                            <input type="text" name="pronouns" x-model="editForm.pronouns" placeholder="She/Her" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800">
+                        </div>
+                    </div>
+
+                    <!-- DOB & Age -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Date of Birth</label>
+                            <input type="date" name="dob" x-model="editForm.dob" @change="onDobChange('edit')" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Age</label>
+                            <input type="number" name="age" x-model="editForm.age" min="10" max="100" placeholder="Auto" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800">
+                        </div>
+                    </div>
+
+                    <!-- Department & Class -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Department</label>
+                            <select name="department_id" x-model="editForm.department_id" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                                <option value="">Unassigned</option>
+                                @foreach($departments ?? [] as $dept)
+                                    <option value="{{ $dept->id }}">{{ $dept->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Assigned Class</label>
+                            <select name="class_id" x-model="editForm.class_id" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                                <option value="">Unassigned</option>
+                                @foreach($classes ?? [] as $cls)
+                                    <option value="{{ $cls->id }}">{{ $cls->code }} - {{ $cls->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Academic Advisor -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Advisor</label>
+                        <input type="text" name="advisor" x-model="editForm.advisor" placeholder="Dr. Sarah Vance" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800">
+                    </div>
+
+                    <!-- GPA, Credits & Status -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">GPA</label>
+                            <input type="number" step="0.01" min="0" max="4.00" name="gpa" x-model="editForm.gpa" placeholder="3.80" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Credits</label>
+                            <input type="number" min="0" max="250" name="credits" x-model="editForm.credits" placeholder="0" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800 font-mono">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Status</label>

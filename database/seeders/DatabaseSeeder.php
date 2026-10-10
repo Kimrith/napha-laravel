@@ -96,23 +96,25 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // 6. Seed Academic Grades & Transcripts
-        $gradesData = [
-            ['student_id' => $studentMap['STU-2026-001'], 'course_id' => $courseMap['CS-101'], 'course_name' => 'CS-101 Programming', 'mid_score' => 94, 'final_score' => 96, 'grade' => 'A+', 'gpa' => 4.00, 'standing' => "Dean's Honors"],
-            ['student_id' => $studentMap['STU-2026-002'], 'course_id' => $courseMap['AI-402'], 'course_name' => 'AI-402 Deep Learning', 'mid_score' => 98, 'final_score' => 97, 'grade' => 'A+', 'gpa' => 4.00, 'standing' => "Dean's Honors"],
-            ['student_id' => $studentMap['STU-2026-003'], 'course_id' => $courseMap['DES-204'], 'course_name' => 'DES-204 UX Systems', 'mid_score' => 88, 'final_score' => 89, 'grade' => 'A-', 'gpa' => 3.70, 'standing' => 'Good Standing'],
-            ['student_id' => $studentMap['STU-2026-004'], 'course_id' => $courseMap['ROB-310'], 'course_name' => 'ROB-310 Kinematics', 'mid_score' => 78, 'final_score' => 82, 'grade' => 'B', 'gpa' => 3.00, 'standing' => 'Good Standing'],
-            ['student_id' => $studentMap['STU-2026-005'], 'course_id' => $courseMap['BIO-215'], 'course_name' => 'BIO-215 CRISPR Protocols', 'mid_score' => 92, 'final_score' => 94, 'grade' => 'A', 'gpa' => 3.90, 'standing' => "Dean's Honors"],
-            ['student_id' => $studentMap['STU-2026-006'], 'course_id' => $courseMap['FIN-350'], 'course_name' => 'FIN-350 Global Finance', 'mid_score' => 84, 'final_score' => 86, 'grade' => 'B+', 'gpa' => 3.30, 'standing' => 'Good Standing'],
-            ['student_id' => $studentMap['STU-2026-007'], 'course_id' => $courseMap['SEC-401'], 'course_name' => 'SEC-401 Cryptography', 'mid_score' => 100, 'final_score' => 99, 'grade' => 'A+', 'gpa' => 4.00, 'standing' => "Dean's Honors"],
-            ['student_id' => $studentMap['STU-2026-008'], 'course_id' => null, 'course_name' => 'MED-110 Media Ethics', 'mid_score' => 75, 'final_score' => 79, 'grade' => 'C+', 'gpa' => 2.70, 'standing' => 'Academic Review'],
-        ];
+        // 6. Seed Academic Grades & Transcripts (if Grade model exists)
+        if (class_exists('App\Models\Grade')) {
+            $gradesData = [
+                ['student_id' => $studentMap['STU-2026-001'], 'course_id' => $courseMap['CS-101'], 'course_name' => 'CS-101 Programming', 'mid_score' => 94, 'final_score' => 96, 'grade' => 'A+', 'gpa' => 4.00, 'standing' => "Dean's Honors"],
+                ['student_id' => $studentMap['STU-2026-002'], 'course_id' => $courseMap['AI-402'], 'course_name' => 'AI-402 Deep Learning', 'mid_score' => 98, 'final_score' => 97, 'grade' => 'A+', 'gpa' => 4.00, 'standing' => "Dean's Honors"],
+                ['student_id' => $studentMap['STU-2026-003'], 'course_id' => $courseMap['DES-204'], 'course_name' => 'DES-204 UX Systems', 'mid_score' => 88, 'final_score' => 89, 'grade' => 'A-', 'gpa' => 3.70, 'standing' => 'Good Standing'],
+                ['student_id' => $studentMap['STU-2026-004'], 'course_id' => $courseMap['ROB-310'], 'course_name' => 'ROB-310 Kinematics', 'mid_score' => 78, 'final_score' => 82, 'grade' => 'B', 'gpa' => 3.00, 'standing' => 'Good Standing'],
+                ['student_id' => $studentMap['STU-2026-005'], 'course_id' => $courseMap['BIO-215'], 'course_name' => 'BIO-215 CRISPR Protocols', 'mid_score' => 92, 'final_score' => 94, 'grade' => 'A', 'gpa' => 3.90, 'standing' => "Dean's Honors"],
+                ['student_id' => $studentMap['STU-2026-006'], 'course_id' => $courseMap['FIN-350'], 'course_name' => 'FIN-350 Global Finance', 'mid_score' => 84, 'final_score' => 86, 'grade' => 'B+', 'gpa' => 3.30, 'standing' => 'Good Standing'],
+                ['student_id' => $studentMap['STU-2026-007'], 'course_id' => $courseMap['SEC-401'], 'course_name' => 'SEC-401 Cryptography', 'mid_score' => 100, 'final_score' => 99, 'grade' => 'A+', 'gpa' => 4.00, 'standing' => "Dean's Honors"],
+                ['student_id' => $studentMap['STU-2026-008'], 'course_id' => null, 'course_name' => 'MED-110 Media Ethics', 'mid_score' => 75, 'final_score' => 79, 'grade' => 'C+', 'gpa' => 2.70, 'standing' => 'Academic Review'],
+            ];
 
-        foreach ($gradesData as $g) {
-            Grade::updateOrCreate(
-                ['student_id' => $g['student_id'], 'course_name' => $g['course_name']],
-                $g
-            );
+            foreach ($gradesData as $g) {
+                Grade::updateOrCreate(
+                    ['student_id' => $g['student_id'], 'course_name' => $g['course_name']],
+                    $g
+                );
+            }
         }
 
         // 7. Seed Settings & Term Configurations

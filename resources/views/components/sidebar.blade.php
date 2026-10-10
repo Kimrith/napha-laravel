@@ -83,13 +83,13 @@
                     <span class="w-2 h-2 rounded-full bg-emerald-400 ring-4 ring-emerald-400/20"></span>
                 </a>
 
-                <!-- Grades & Records -->
-                <a href="{{ url('/grades') }}" 
-                   class="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->is('grades*') ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/25 font-semibold' : 'text-slate-400 hover:text-slate-100 hover:bg-sidebar-hover' }}">
-                    <svg class="w-5 h-5 {{ request()->is('grades*') ? 'text-white' : 'text-slate-400 group-hover:text-brand-400' }} transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                <!-- Classes -->
+                <a href="{{ route('classes.index') }}" 
+                   class="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ (request()->is('classes*') || request()->is('classs*')) ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/25 font-semibold' : 'text-slate-400 hover:text-slate-100 hover:bg-sidebar-hover' }}">
+                    <svg class="w-5 h-5 {{ (request()->is('classes*') || request()->is('classs*')) ? 'text-white' : 'text-slate-400 group-hover:text-brand-400' }} transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                     </svg>
-                    <span>Grades & Records</span>
+                    <span>Classes</span>
                 </a>
             </nav>
         </div>
