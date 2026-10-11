@@ -50,6 +50,8 @@ class ClassController extends Controller
         $validated = $request->validate([
             'code' => ['required', 'string', 'max:30', 'unique:classes,code'],
             'name' => ['required', 'string', 'max:255'],
+            'room_number' => ['nullable', 'string', 'max:50'],
+            'subject' => ['nullable', 'string', 'max:191'],
             'status' => ['nullable', 'string', 'max:30'],
         ]);
 
@@ -78,6 +80,8 @@ class ClassController extends Controller
         $validated = $request->validate([
             'code' => ['required', 'string', 'max:30', "unique:classes,code,{$class->id}"],
             'name' => ['required', 'string', 'max:255'],
+            'room_number' => ['nullable', 'string', 'max:50'],
+            'subject' => ['nullable', 'string', 'max:191'],
             'status' => ['nullable', 'string', 'max:30'],
         ]);
 
@@ -129,7 +133,9 @@ class ClassController extends Controller
 
         DB::transaction(function () use ($class, $validated): void {
             Student::whereIn('id', $validated['student_ids'])->update(['class_id' => $class->id]);
-            $class->enrolledStudents()->syncWithoutDetaching($validated['student_ids']);
+            foreach (Student::whereIn('id', $validated['student_ids'])->get() as $std) {
+                $std->classes()->sync([$class->id]);
+            }
         });
 
         $count = count($validated['student_ids']);

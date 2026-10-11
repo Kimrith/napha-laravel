@@ -63,6 +63,8 @@
                         (student.advisor && student.advisor.toLowerCase().includes(query)) ||
                         (student.class_code && student.class_code.toLowerCase().includes(query)) ||
                         (student.class_name && student.class_name.toLowerCase().includes(query)) ||
+                        (student.room_number && student.room_number.toLowerCase().includes(query)) ||
+                        (student.subject && student.subject.toLowerCase().includes(query)) ||
                         (student.major && student.major.toLowerCase().includes(query));
 
                     const matchesMajor = this.selectedMajor === 'All' || student.major === this.selectedMajor;

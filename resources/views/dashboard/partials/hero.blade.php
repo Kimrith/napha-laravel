@@ -1,33 +1,52 @@
 <!-- resources/views/dashboard/partials/hero.blade.php -->
-<div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-sidebar-base via-slate-900 to-brand-950 p-6 sm:p-8 text-white shadow-xl border border-slate-800">
-    <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-brand-600/20 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div class="space-y-2 max-w-2xl">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/20 text-brand-300 text-xs font-bold border border-brand-500/30">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Fall Semester 2026 · Week 8 in Session</span>
+<div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-7 border border-slate-200/80 dark:border-slate-800 shadow-xs relative overflow-hidden transition-colors">
+    <!-- Clean Accent Stripe -->
+    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-600 via-indigo-600 to-sky-500"></div>
+
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pt-1">
+        <!-- Greeting & Context -->
+        <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 text-xs font-semibold border border-slate-200/80 dark:border-slate-700/80">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>{{ now()->format('l, F j, Y') }}</span>
+                <span class="text-slate-300 dark:text-slate-600">•</span>
+                <span class="text-brand-700 dark:text-brand-400 font-bold">{{ $termName ?? 'Fall Semester 2026' }}</span>
+                <span class="text-slate-400 dark:text-slate-400 font-mono text-[11px]">({{ $termWeek ?? 'Week 8' }})</span>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                Welcome back, <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 to-indigo-200">Dr. Sarah Vance</span>
+
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                Welcome back, <span class="text-brand-600 dark:text-brand-400">{{ auth()->user()->name ?? ($userName ?? 'Administrator') }}</span>
             </h1>
-            <p class="text-sm text-slate-300 leading-relaxed font-normal">
-                Student enrollment is operating at 94.6% capacity across 8 academic schools. 14 student registrations require dean approval before Friday 5:00 PM.
+
+            <p class="text-sm text-slate-500 dark:text-slate-400 max-w-2xl font-normal leading-relaxed">
+                Campus overview: <span class="font-semibold text-slate-800 dark:text-slate-200">{{ number_format($studentsCount ?? 0) }} students</span> enrolled across <span class="font-semibold text-slate-800 dark:text-slate-200">{{ number_format($classesCount ?? 0) }} active cohorts</span> with <span class="font-semibold text-emerald-600 dark:text-emerald-400">{{ $attendanceRate ?? '95.0' }}% recorded attendance</span>.
             </p>
         </div>
-        <div class="flex items-center gap-3 flex-wrap">
-            <a href="{{ route('students.index') }}" 
-               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-brand-600 hover:bg-brand-500 text-white shadow-lg shadow-brand-600/30 transition-all">
+
+        <!-- Quick Primary Actions -->
+        <div class="flex items-center gap-2.5 flex-wrap shrink-0">
+            <a href="{{ route('attendance.index') }}" 
+               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 dark:bg-brand-600 dark:hover:bg-brand-500 text-white shadow-xs hover:shadow-md transition-all">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                 </svg>
-                <span>Manage Students</span>
+                <span>Take Roll Call</span>
             </a>
-            <a href="{{ route('classes.index') }}" 
-               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-sm transition-all">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+
+            <a href="{{ route('students.create') }}" 
+               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors shadow-2xs">
+                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                 </svg>
-                <span>Cohort Classes</span>
+                <span>Add Student</span>
+            </a>
+
+            <a href="{{ route('classes.index') }}" 
+               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors shadow-2xs">
+                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                <span>Class Cohorts</span>
             </a>
         </div>
     </div>

@@ -22,7 +22,7 @@
                  x-transition:leave="transform transition ease-in-out duration-300"
                  x-transition:leave-start="translate-x-0"
                  x-transition:leave-end="translate-x-full"
-                 class="pointer-events-auto w-screen max-w-md bg-white shadow-2xl flex flex-col">
+                 class="pointer-events-auto w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col">
                 
                 <template x-if="activeStudent">
                     <div class="h-full flex flex-col">
@@ -54,68 +54,76 @@
                         <div class="flex-1 overflow-y-auto p-6 space-y-6">
                             
                             <!-- Academic Status Bar -->
-                            <div class="grid grid-cols-3 gap-3 p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 text-center">
+                            <div class="grid grid-cols-3 gap-3 p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200/80 dark:border-slate-700 text-center">
                                 <div>
-                                    <span class="text-[10px] font-bold uppercase text-slate-400">Cumulative GPA</span>
-                                    <p class="text-base font-extrabold text-slate-900 mt-0.5" x-text="activeStudent.gpa"></p>
+                                    <span class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-400">Cumulative GPA</span>
+                                    <p class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5" x-text="activeStudent.gpa"></p>
                                 </div>
-                                <div class="border-x border-slate-200">
-                                    <span class="text-[10px] font-bold uppercase text-slate-400">Credits</span>
-                                    <p class="text-base font-extrabold text-slate-900 mt-0.5" x-text="activeStudent.credits + ' / 120'"></p>
+                                <div class="border-x border-slate-200 dark:border-slate-700">
+                                    <span class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-400">Credits</span>
+                                    <p class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5" x-text="activeStudent.credits + ' / 120'"></p>
                                 </div>
                                 <div>
-                                    <span class="text-[10px] font-bold uppercase text-slate-400">Attendance</span>
-                                    <p class="text-base font-extrabold text-emerald-600 mt-0.5" x-text="activeStudent.attendance ? activeStudent.attendance + '%' : 'N/A'"></p>
+                                    <span class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-400">Attendance</span>
+                                    <p class="text-base font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5" x-text="activeStudent.attendance ? activeStudent.attendance + '%' : 'N/A'"></p>
                                 </div>
                             </div>
 
                             <!-- Identity & Demographics -->
                             <div>
-                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Identity & Demographics</h4>
+                                <h4 class="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-3">Identity & Demographics</h4>
                                 <div class="space-y-2.5 text-xs">
-                                    <div class="flex justify-between py-1.5 border-b border-slate-100">
-                                        <span class="text-slate-500">Gender & Pronouns</span>
-                                        <span class="font-semibold text-slate-800" x-text="activeStudent.gender + (activeStudent.pronouns ? ' (' + activeStudent.pronouns + ')' : '')"></span>
+                                    <div class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                                        <span class="text-slate-500 dark:text-slate-400">Gender & Pronouns</span>
+                                        <span class="font-semibold text-slate-800 dark:text-slate-200" x-text="activeStudent.gender + (activeStudent.pronouns ? ' (' + activeStudent.pronouns + ')' : '')"></span>
                                     </div>
-                                    <div class="flex justify-between py-1.5 border-b border-slate-100">
-                                        <span class="text-slate-500">Date of Birth</span>
-                                        <span class="font-semibold text-slate-800" x-text="(activeStudent.dob || '-') + (activeStudent.age ? ' (Age ' + activeStudent.age + ')' : '')"></span>
+                                    <div class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                                        <span class="text-slate-500 dark:text-slate-400">Date of Birth</span>
+                                        <span class="font-semibold text-slate-800 dark:text-slate-200" x-text="(activeStudent.dob || '-') + (activeStudent.age ? ' (Age ' + activeStudent.age + ')' : '')"></span>
                                     </div>
-                                    <div class="flex justify-between py-1.5 border-b border-slate-100">
-                                        <span class="text-slate-500">Academic Advisor</span>
-                                        <span class="font-semibold text-brand-600" x-text="activeStudent.advisor || 'Unassigned'"></span>
+                                    <div class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                                        <span class="text-slate-500 dark:text-slate-400">Academic Advisor</span>
+                                        <span class="font-semibold text-brand-600 dark:text-brand-400" x-text="activeStudent.advisor || 'Unassigned'"></span>
                                     </div>
-                                    <div class="flex justify-between py-1.5 border-b border-slate-100">
-                                        <span class="text-slate-500">Department</span>
-                                        <span class="font-semibold text-slate-800" x-text="activeStudent.department || 'Unassigned'"></span>
+                                    <div class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                                        <span class="text-slate-500 dark:text-slate-400">Department</span>
+                                        <span class="font-semibold text-slate-800 dark:text-slate-200" x-text="activeStudent.department || 'Unassigned'"></span>
                                     </div>
-                                    <div class="flex justify-between py-1.5 border-b border-slate-100">
-                                        <span class="text-slate-500">Assigned Class</span>
-                                        <span class="font-semibold text-brand-600" x-text="activeStudent.class_name || 'Unassigned'"></span>
+                                    <div class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                                        <span class="text-slate-500 dark:text-slate-400">Assigned Class</span>
+                                        <span class="font-semibold text-brand-600 dark:text-brand-400" x-text="activeStudent.class_name || 'Unassigned'"></span>
+                                    </div>
+                                    <div class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                                        <span class="text-slate-500 dark:text-slate-400">Class Room</span>
+                                        <span class="font-semibold text-purple-700 dark:text-purple-300" x-text="activeStudent.room_number || 'N/A'"></span>
+                                    </div>
+                                    <div class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                                        <span class="text-slate-500 dark:text-slate-400">Class Subject</span>
+                                        <span class="font-semibold text-blue-700 dark:text-blue-300" x-text="activeStudent.subject || 'N/A'"></span>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Contact Details -->
                             <div>
-                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Contact Information</h4>
+                                <h4 class="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-3">Contact Information</h4>
                                 <div class="space-y-2.5 text-xs">
-                                    <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                                        <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600">
+                                    <div class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-750/50 dark:border-slate-800">
+                                        <div class="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300">
                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                                         </div>
                                         <div>
-                                            <p class="text-[10px] text-slate-400 font-medium">Institution Email</p>
-                                            <p class="font-semibold text-slate-800" x-text="activeStudent.email"></p>
+                                            <p class="text-[10px] text-slate-400 dark:text-slate-400 font-medium">Institution Email</p>
+                                            <p class="font-semibold text-slate-800 dark:text-slate-200" x-text="activeStudent.email"></p>
                                         </div>
                                     </div>
-                                    <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                                        <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600">
+                                    <div class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-750/50 dark:border-slate-800">
+                                        <div class="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300">
                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                                         </div>
                                         <div>
-                                            <p class="text-[10px] text-slate-400 font-medium">Mobile Phone</p>
-                                            <p class="font-semibold text-slate-800" x-text="activeStudent.phone || 'N/A'"></p>
+                                            <p class="text-[10px] text-slate-400 dark:text-slate-400 font-medium">Mobile Phone</p>
+                                            <p class="font-semibold text-slate-800 dark:text-slate-200" x-text="activeStudent.phone || 'N/A'"></p>
                                         </div>
                                     </div>
                                 </div>
@@ -124,9 +132,9 @@
                         </div>
 
                         <!-- Footer Actions -->
-                        <div class="p-6 bg-slate-50 border-t border-slate-200 flex items-center gap-3">
+                        <div class="p-6 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center gap-3 shrink-0">
                             <button @click="openEditModal(activeStudent); viewSlideOverOpen = false;" 
-                                    class="flex-1 py-2.5 rounded-xl text-xs font-semibold text-slate-800 bg-white border border-slate-200 hover:bg-slate-100 transition-colors">
+                                    class="flex-1 py-2.5 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                                 Edit Details
                             </button>
                             <button @click="viewSlideOverOpen = false" 

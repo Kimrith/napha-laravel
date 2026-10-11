@@ -36,6 +36,8 @@
             newClass: {
                 code: '',
                 name: '',
+                room_number: '',
+                subject: '',
                 status: 'Active'
             },
             selectedStudentIds: [],
@@ -48,7 +50,9 @@
                 if (!query) return this.classes;
                 return this.classes.filter(c => 
                     c.code.toLowerCase().includes(query) ||
-                    c.name.toLowerCase().includes(query)
+                    c.name.toLowerCase().includes(query) ||
+                    (c.room_number && c.room_number.toLowerCase().includes(query)) ||
+                    (c.subject && c.subject.toLowerCase().includes(query))
                 );
             },
 
@@ -66,6 +70,8 @@
                 this.newClass = {
                     code: '',
                     name: '',
+                    room_number: '',
+                    subject: '',
                     status: 'Active'
                 };
                 this.addModalOpen = true;

@@ -173,7 +173,7 @@ class StudentController extends Controller
             $path = $request->file('avatar')->store('avatars', 'public');
             $validated['avatar'] = Storage::url($path);
         } elseif (empty($validated['avatar'])) {
-            $validated['avatar'] = 'https://ui-avatars.com/api/?name='.urlencode($validated['name']).'&background=6366f1&color=fff';
+            $validated['avatar'] = 'https://th.bing.com/th/id/OIP.INLvb-o0kn0nLl4vn6ATtgHaHa?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3';
         }
 
         $student = DB::transaction(function () use ($validated): Student {
@@ -519,7 +519,9 @@ class StudentController extends Controller
                     ->orWhere('major', 'like', "%{$search}%")
                     ->orWhereHas('schoolClass', function ($cq) use ($search): void {
                         $cq->where('code', 'like', "%{$search}%")
-                            ->orWhere('name', 'like', "%{$search}%");
+                            ->orWhere('name', 'like', "%{$search}%")
+                            ->orWhere('room_number', 'like', "%{$search}%")
+                            ->orWhere('subject', 'like', "%{$search}%");
                     });
             });
         }
@@ -577,6 +579,8 @@ class StudentController extends Controller
             'class_id' => $student->class_id,
             'class_name' => $student->schoolClass ? ($student->schoolClass->code.' - '.$student->schoolClass->name) : 'Unassigned',
             'class_code' => $student->schoolClass?->code ?: 'Unassigned',
+            'room_number' => $student->schoolClass?->room_number ?: 'N/A',
+            'subject' => $student->schoolClass?->subject ?: 'N/A',
             'gpa' => $student->gpa !== null ? number_format((float) $student->gpa, 2) : '0.00',
             'credits' => (int) ($student->credits ?? 0),
             'advisor' => $student->advisor ?: 'Unassigned',

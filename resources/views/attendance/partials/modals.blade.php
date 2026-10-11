@@ -38,7 +38,7 @@
                 <div>
                     <h3 class="text-base font-bold text-slate-900" id="modal-finalize-title">Finalize Roll-Call?</h3>
                     <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
-                        Are you ready to submit roll-call log for session <strong x-text="selectedDate"></strong> (<span class="font-medium text-slate-700" x-text="courses.find(c => c.id == selectedCourseId)?.code || 'All Courses'"></span>)? Official records will be forwarded to the academic registrar.
+                        Are you ready to submit roll-call log for session <strong x-text="selectedDate"></strong> (<span class="font-medium text-slate-700" x-text="selectedClassId === 'All' ? 'All Classes' : (classes.find(c => c.id == selectedClassId)?.code || 'Class #' + selectedClassId)"></span>)? Official records will be forwarded to the academic registrar.
                     </p>
                     <div class="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-600 space-y-1">
                         <div class="flex justify-between">
@@ -128,19 +128,6 @@
                             <option value="">Select Student...</option>
                             @foreach($students as $student)
                                 <option value="{{ $student->id }}">{{ $student->student_id }} — {{ $student->name }} ({{ $student->major }})</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Course Selection -->
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Course Session</label>
-                        <select name="course_id" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:ring-brand-500 focus:border-brand-500 bg-white shadow-2xs">
-                            <option value="">No specific course / General</option>
-                            @foreach($courses as $course)
-                                <option value="{{ $course->id }}" {{ (string)$selectedCourseId === (string)$course->id ? 'selected' : '' }}>
-                                    {{ $course->code }} — {{ $course->name }}
-                                </option>
                             @endforeach
                         </select>
                     </div>

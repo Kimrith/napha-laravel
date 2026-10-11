@@ -59,17 +59,6 @@
                     </span>
                 </a>
 
-                <!-- Active Courses -->
-                <a href="{{ url('/courses') }}" 
-                   class="group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->is('courses*') ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/25 font-semibold' : 'text-slate-400 hover:text-slate-100 hover:bg-sidebar-hover' }}">
-                    <div class="flex items-center gap-3">
-                        <svg class="w-5 h-5 {{ request()->is('courses*') ? 'text-white' : 'text-slate-400 group-hover:text-brand-400' }} transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                        <span>Active Courses</span>
-                    </div>
-                    <span class="text-[11px] font-semibold {{ request()->is('courses*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}">64</span>
-                </a>
 
                 <!-- Attendance -->
                 <a href="{{ url('/attendance') }}" 
@@ -146,22 +135,25 @@
 
     <!-- Sidebar Footer: User Profile Widget -->
     <div class="p-4 border-t border-sidebar-border bg-sidebar-base/95">
-        <div class="flex items-center gap-3 p-2 rounded-xl bg-sidebar-card/80 border border-sidebar-border hover:border-slate-700 transition-colors cursor-pointer group">
+        <div class="flex items-center gap-3 p-2 rounded-xl bg-sidebar-card/80 border border-sidebar-border hover:border-slate-700 transition-colors group">
             <div class="relative flex-shrink-0">
                 <img class="w-10 h-10 rounded-xl object-cover ring-2 ring-brand-500/30" 
-                     src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&auto=format&fit=crop" 
-                     alt="Dr. Sarah Vance">
+                     src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=4f46e5&color=fff&bold=true" 
+                     alt="{{ auth()->user()->name ?? 'User' }}">
                 <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-sidebar-card rounded-full"></span>
             </div>
             <div class="flex-1 min-w-0">
-                <h5 class="text-xs font-bold text-white truncate group-hover:text-brand-300 transition-colors">Dr. Sarah Vance</h5>
-                <p class="text-[11px] text-slate-400 truncate font-medium">Chief Dean of Records</p>
+                <h5 class="text-xs font-bold text-white truncate group-hover:text-brand-300 transition-colors">{{ auth()->user()->name ?? 'Administrator' }}</h5>
+                <p class="text-[11px] text-slate-400 truncate font-medium">{{ auth()->user()->email ?? 'Portal User' }}</p>
             </div>
-            <button class="text-slate-400 group-hover:text-white p-1 rounded-lg transition-colors">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
-                </svg>
-            </button>
+            <form action="{{ route('logout') }}" method="POST" class="inline">
+                @csrf
+                <button type="submit" title="Sign Out of Portal" class="text-slate-400 hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-500/10 transition-colors">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                </button>
+            </form>
         </div>
     </div>
 

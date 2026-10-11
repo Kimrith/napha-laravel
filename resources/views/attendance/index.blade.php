@@ -26,7 +26,8 @@
     function attendanceManager() {
         return {
             selectedDate: '{{ $selectedDate }}',
-            selectedCourseId: '{{ $selectedCourseId }}',
+            selectedClassId: '{{ $selectedClassId ?? 'All' }}',
+            selectedCourseId: '{{ $selectedCourseId ?? 'All' }}',
             selectedStatus: '{{ $selectedStatus }}',
             searchQuery: '',
             confirmModalOpen: false,
@@ -35,6 +36,7 @@
 
             attendees: @json($attendees ?? []),
             courses: @json($courses ?? []),
+            classes: @json($classes ?? []),
 
             get filteredAttendees() {
                 if (!this.searchQuery.trim()) {
@@ -45,7 +47,10 @@
                     (a.name && a.name.toLowerCase().includes(q)) ||
                     (a.id && a.id.toLowerCase().includes(q)) ||
                     (a.major && a.major.toLowerCase().includes(q)) ||
-                    (a.course_code && a.course_code.toLowerCase().includes(q))
+                    (a.class_code && a.class_code.toLowerCase().includes(q)) ||
+                    (a.class_name && a.class_name.toLowerCase().includes(q)) ||
+                    (a.room_number && a.room_number.toLowerCase().includes(q)) ||
+                    (a.subject && a.subject.toLowerCase().includes(q))
                 );
             },
 
@@ -68,8 +73,9 @@
             applyFilters() {
                 const params = new URLSearchParams();
                 if (this.selectedDate) params.set('date', this.selectedDate);
-                if (this.selectedCourseId) params.set('course_id', this.selectedCourseId);
-                if (this.selectedStatus) params.set('status', this.selectedStatus);
+                if (this.selectedClassId && this.selectedClassId !== 'All') params.set('class_id', this.selectedClassId);
+                if (this.selectedCourseId && this.selectedCourseId !== 'All') params.set('course_id', this.selectedCourseId);
+                if (this.selectedStatus && this.selectedStatus !== 'All') params.set('status', this.selectedStatus);
                 window.location.href = `{{ route('attendance.index') }}?` + params.toString();
             },
 
@@ -79,14 +85,16 @@
                 const nextStatus = order[nextIdx];
                 
                 try {
-                    const response = await fetch(`/attendance/${attendee.record_id}`, {
-                        method: 'PUT',
+                    const response = await fetch("{{ route('attendance.toggle-status') }}", {
+                        method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
                         body: JSON.stringify({
+                            student_id: attendee.student_db_id,
+                            date: this.selectedDate,
                             status: nextStatus
                         })
                     });
@@ -94,6 +102,7 @@
                     if (response.ok && result.success) {
                         attendee.status = result.data.status;
                         attendee.timeIn = result.data.timeIn;
+                        attendee.record_id = result.data.record_id;
                         if (typeof showToast === 'function') {
                             showToast(result.message || `Updated attendance for ${attendee.name} to ${attendee.status}`, 'info');
                         }
@@ -122,6 +131,7 @@
                         },
                         body: JSON.stringify({
                             date: this.selectedDate,
+                            class_id: this.selectedClassId,
                             course_id: this.selectedCourseId
                         })
                     });
@@ -159,6 +169,7 @@
                         },
                         body: JSON.stringify({
                             date: this.selectedDate,
+                            class_id: this.selectedClassId,
                             course_id: this.selectedCourseId,
                             attendees: this.attendees
                         })
@@ -214,6 +225,7 @@
             exportLog() {
                 const params = new URLSearchParams();
                 if (this.selectedDate) params.set('date', this.selectedDate);
+                if (this.selectedClassId && this.selectedClassId !== 'All') params.set('class_id', this.selectedClassId);
                 if (this.selectedCourseId && this.selectedCourseId !== 'All') params.set('course_id', this.selectedCourseId);
                 window.location.href = `{{ route('attendance.export') }}?` + params.toString();
             }

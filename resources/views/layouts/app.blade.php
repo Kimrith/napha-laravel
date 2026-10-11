@@ -1,10 +1,47 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-50 font-sans antialiased">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-50 dark:bg-slate-950 font-sans antialiased">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'EduPulse Pro - Student Management System')</title>
+
+    <!-- Theme Detection & Initialization Script -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('edupulse_theme') || 'system';
+            if (savedTheme === 'dark' || (savedTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+
+        window.applyTheme = function(mode) {
+            localStorage.setItem('edupulse_theme', mode);
+            if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            window.dispatchEvent(new CustomEvent('theme-changed', { detail: mode }));
+        };
+
+        window.getTheme = function() {
+            return localStorage.getItem('edupulse_theme') || 'system';
+        };
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if ((localStorage.getItem('edupulse_theme') || 'system') === 'system') {
+                if (e.matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                window.dispatchEvent(new CustomEvent('theme-changed', { detail: 'system' }));
+            }
+        });
+    </script>
 
     <!-- Google Fonts: Inter & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -59,11 +96,13 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background: #334155; }
         .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
-<body class="h-full text-slate-800 bg-slate-50 flex flex-col antialiased selection:bg-brand-500 selection:text-white"
+<body class="h-full text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-950 flex flex-col antialiased selection:bg-brand-500 selection:text-white"
       x-data="{ 
           mobileSidebarOpen: false, 
           notificationsOpen: false,
@@ -86,24 +125,24 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0 translate-y-2"
-         class="fixed top-5 right-5 z-50 max-w-sm w-full bg-white rounded-xl shadow-xl border border-slate-100 p-4 flex items-start gap-3 pointer-events-auto">
+         class="fixed top-5 right-5 z-50 max-w-sm w-full bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 p-4 flex items-start gap-3 pointer-events-auto">
         <div class="flex-shrink-0 mt-0.5">
             <template x-if="toast.type === 'success'">
-                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/>
                     </svg>
                 </div>
             </template>
             <template x-if="toast.type === 'info'">
-                <div class="w-8 h-8 rounded-lg bg-indigo-50 text-brand-600 flex items-center justify-center">
+                <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
             </template>
             <template x-if="toast.type === 'danger'">
-                <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
+                <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                     </svg>
@@ -111,10 +150,10 @@
             </template>
         </div>
         <div class="flex-1">
-            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400" x-text="toast.type === 'success' ? 'Success' : (toast.type === 'info' ? 'Notification' : 'Notice')"></p>
-            <p class="text-sm font-medium text-slate-800 mt-0.5" x-text="toast.message"></p>
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500" x-text="toast.type === 'success' ? 'Success' : (toast.type === 'info' ? 'Notification' : 'Notice')"></p>
+            <p class="text-sm font-medium text-slate-800 dark:text-slate-100 mt-0.5" x-text="toast.message"></p>
         </div>
-        <button @click="toast.show = false" class="text-slate-400 hover:text-slate-600 transition-colors">
+        <button @click="toast.show = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
@@ -139,7 +178,7 @@
         @include('components.sidebar')
 
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50 dark:bg-slate-950">
             
             <!-- Reusable Top Header Component -->
             @include('components.header')

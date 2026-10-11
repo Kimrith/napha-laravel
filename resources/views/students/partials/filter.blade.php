@@ -4,12 +4,12 @@
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-2">
         <div>
             <div class="flex items-center gap-3">
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Student Records</h1>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200"
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Student Records</h1>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800/80"
                       x-text="filteredStudents.length + ' Enrolled'">
                 </span>
             </div>
-            <p class="text-sm text-slate-500 mt-1 max-w-2xl font-normal">
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl font-normal">
                 Manage enrolled students, academic tracking, personal contact details, and department registrations.
             </p>
         </div>
@@ -18,8 +18,8 @@
         <div class="flex items-center gap-3 flex-wrap">
             <button type="button" 
                     @click="exportCSV()" 
-                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs transition-all">
-                <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200/90 dark:border-slate-700 shadow-2xs transition-all">
+                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                 </svg>
                 <span>Export CSV</span>
@@ -37,11 +37,11 @@
     </div>
 
     <!-- Filter and Search Bar -->
-    <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs space-y-3">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
             <!-- Search Input -->
             <div class="relative sm:col-span-2 lg:col-span-4">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
@@ -49,11 +49,11 @@
                 <input type="text" 
                        x-model="searchQuery" 
                        placeholder="Search by name, ID, class, advisor..." 
-                       class="w-full pl-10 pr-9 py-2.5 text-sm bg-slate-50 hover:bg-slate-100/60 focus:bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-hidden transition-all text-slate-800 placeholder-slate-400">
+                       class="w-full pl-10 pr-9 py-2.5 text-sm bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100/60 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-hidden transition-all text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500">
                 <button type="button" 
                         x-show="searchQuery" 
                         @click="searchQuery = ''" 
-                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -63,7 +63,7 @@
             <!-- Class / Cohort Filter -->
             <div class="sm:col-span-1 lg:col-span-2">
                 <select x-model="selectedClass" 
-                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 hover:bg-slate-100/60 focus:bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-hidden transition-all text-slate-800 font-medium cursor-pointer">
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100/60 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-hidden transition-all text-slate-800 dark:text-slate-200 font-medium cursor-pointer">
                     <option value="All">All Classes</option>
                     <option value="unassigned">⚠️ Unassigned Cohort</option>
                     @foreach($classes ?? [] as $cls)
@@ -75,7 +75,7 @@
             <!-- Department Filter -->
             <div class="sm:col-span-1 lg:col-span-2">
                 <select x-model="selectedDepartment" 
-                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 hover:bg-slate-100/60 focus:bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-hidden transition-all text-slate-800 font-medium cursor-pointer">
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100/60 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-hidden transition-all text-slate-800 dark:text-slate-200 font-medium cursor-pointer">
                     <option value="All">All Departments</option>
                     @foreach($departments ?? [] as $dept)
                         <option value="{{ $dept->id }}">{{ $dept->name }}</option>
@@ -86,7 +86,7 @@
             <!-- Major Dropdown Filter -->
             <div class="sm:col-span-1 lg:col-span-2">
                 <select x-model="selectedMajor" 
-                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 hover:bg-slate-100/60 focus:bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-hidden transition-all text-slate-800 font-medium cursor-pointer">
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100/60 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-hidden transition-all text-slate-800 dark:text-slate-200 font-medium cursor-pointer">
                     <option value="All">All Majors</option>
                     @foreach($majors ?? [] as $majorOption)
                         <option value="{{ $majorOption }}">{{ $majorOption }}</option>
@@ -97,7 +97,7 @@
             <!-- Status Dropdown Filter -->
             <div class="sm:col-span-1 lg:col-span-2 flex items-center gap-2">
                 <select x-model="selectedStatus" 
-                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 hover:bg-slate-100/60 focus:bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-hidden transition-all text-slate-800 font-medium cursor-pointer">
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100/60 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-hidden transition-all text-slate-800 dark:text-slate-200 font-medium cursor-pointer">
                     <option value="All">All Statuses</option>
                     <option value="Active">Active Only</option>
                     <option value="Inactive">Inactive Only</option>
@@ -107,7 +107,7 @@
                 <button type="button" 
                         x-show="searchQuery !== '' || selectedClass !== 'All' || selectedDepartment !== 'All' || selectedMajor !== 'All' || selectedStatus !== 'All'" 
                         @click="searchQuery = ''; selectedClass = 'All'; selectedDepartment = 'All'; selectedMajor = 'All'; selectedStatus = 'All'" 
-                        class="p-2.5 rounded-xl text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-colors shrink-0"
+                        class="p-2.5 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-transparent hover:border-rose-100 dark:hover:border-rose-900 transition-colors shrink-0"
                         title="Reset Filters">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -119,16 +119,16 @@
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 -translate-y-2"
              x-transition:enter-end="opacity-100 translate-y-0"
-             class="flex flex-wrap items-center justify-between gap-3 p-3 bg-brand-50/70 border border-brand-200/80 rounded-xl">
+             class="flex flex-wrap items-center justify-between gap-3 p-3 bg-brand-50/70 dark:bg-brand-950/50 border border-brand-200/80 dark:border-brand-800/80 rounded-xl">
             <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-brand-600 animate-pulse"></span>
-                <span class="text-xs font-bold text-brand-900" x-text="selectedIds.length + ' student' + (selectedIds.length > 1 ? 's' : '') + ' selected'"></span>
+                <span class="text-xs font-bold text-brand-900 dark:text-brand-300" x-text="selectedIds.length + ' student' + (selectedIds.length > 1 ? 's' : '') + ' selected'"></span>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
                 <!-- Batch Class Assignment Selector -->
-                <div class="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs">
-                    <span class="text-xs text-slate-500 font-medium">Assign Cohort:</span>
-                    <select x-model="batchClassId" class="text-xs font-semibold text-slate-800 bg-transparent border-none focus:ring-0 p-0 cursor-pointer">
+                <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs">
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Assign Cohort:</span>
+                    <select x-model="batchClassId" class="text-xs font-semibold text-slate-800 dark:text-slate-200 bg-transparent border-none focus:ring-0 p-0 cursor-pointer">
                         <option value="">Choose Class...</option>
                         <option value="unassigned">Unassign</option>
                         @foreach($classes ?? [] as $cls)
@@ -141,19 +141,20 @@
                     </button>
                 </div>
 
-                <button type="button" @click="batchMarkStatus('Active')" class="px-2.5 py-1.5 bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-semibold transition-colors">
+                <button type="button" @click="batchMarkStatus('Active')" class="px-2.5 py-1.5 bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 rounded-lg text-xs font-semibold transition-colors">
                     Mark Active
                 </button>
-                <button type="button" @click="batchMarkStatus('Inactive')" class="px-2.5 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-xs font-semibold transition-colors">
+                <button type="button" @click="batchMarkStatus('Inactive')" class="px-2.5 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold transition-colors">
                     Mark Inactive
                 </button>
-                <button type="button" @click="batchDelete()" class="px-2.5 py-1.5 bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 rounded-lg text-xs font-semibold transition-colors">
+                <button type="button" @click="batchDelete()" class="px-2.5 py-1.5 bg-white dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800 rounded-lg text-xs font-semibold transition-colors">
                     Delete Selected
                 </button>
-                <button type="button" @click="selectedIds = []" class="text-xs font-medium text-slate-500 hover:text-slate-800 underline ml-2">
+                <button type="button" @click="selectedIds = []" class="text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 underline ml-2">
                     Deselect all
                 </button>
             </div>
         </div>
     </div>
 </div>
+
