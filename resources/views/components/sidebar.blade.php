@@ -109,28 +109,6 @@
                 </a>
             </nav>
         </div>
-
-        <!-- Academic Info Widget in Sidebar -->
-        <div class="p-3.5 rounded-2xl bg-sidebar-card border border-sidebar-border">
-            <div class="flex items-center justify-between text-xs font-semibold text-slate-300">
-                <span class="flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                    Academic Term
-                </span>
-                <span class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Active</span>
-            </div>
-            <div class="mt-2.5">
-                <h4 class="text-xs font-bold text-white tracking-tight">Fall Semester 2026</h4>
-                <div class="flex items-center justify-between mt-1 text-[11px] text-slate-400 font-medium">
-                    <span>Week 8 of 16</span>
-                    <span class="text-brand-300 font-semibold">50%</span>
-                </div>
-                <div class="w-full bg-slate-800 rounded-full h-1.5 mt-1.5 overflow-hidden">
-                    <div class="bg-gradient-to-r from-brand-500 to-indigo-400 h-1.5 rounded-full w-1/2"></div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <!-- Sidebar Footer: User Profile Widget -->

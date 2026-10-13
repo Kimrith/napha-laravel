@@ -22,9 +22,9 @@
 <script>
     function classManager() {
         return {
-            searchQuery: '',
+            searchQuery: '{{ request('search', '') }}',
             assignSearchQuery: '',
-            addModalOpen: false,
+            addModalOpen: {{ request('action') === 'add' ? 'true' : 'false' }},
             editModalOpen: false,
             deleteModalOpen: false,
             assignModalOpen: false,
